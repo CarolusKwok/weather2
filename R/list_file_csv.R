@@ -13,5 +13,6 @@ list_file_csv = function(dir, subdirectory = T){
     temp = list.files(path = dir, pattern = "*.csv", recursive = subdirectory, full.names = T)
     list = unique(c(list, temp))
   }
+  list = unlist(list)
   return(list)
 }

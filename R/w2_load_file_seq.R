@@ -27,10 +27,11 @@ w2_load_file_seq = function(data, title, list_fail = F, attempt = 10){
                   tryCatch(basename(data$DIR[nrow(data)]), error = function(e){"NA"}))
 
   #Download panel ####
+  time_start = Sys.time()
   cli::cli_text(cli::style_bold(cli::col_green("____________Initiate download process____________")))
   cli::cli_text("Info")
   cli::cli_alert_info("Downloading {.var {title}}")
-  cli::cli_alert_info("Start Time: {Sys.time()}")
+  cli::cli_alert_info("Start Time: {time_start}")
   cli::cli_alert_info("First File: {file_f}")
   cli::cli_alert_info("Last  File: {file_n}")
   cli::cli_alert_info("     Files: {nrow(data)}")
@@ -74,9 +75,12 @@ w2_load_file_seq = function(data, title, list_fail = F, attempt = 10){
   fail = dplyr::mutate(data, exist = file.exists(DIR)) %>%
     dplyr::filter(exist == F) %>%
     nrow()
+  time_end = Sys.time()
+  time_diff= difftime(time_start, time_end, units = "secs")
   cli::cli_text(cli::style_bold(cli::col_red("________________Download complete________________")))
   cli::cli_text("Info")
-  cli::cli_alert_info("End Time: {Sys.time()}")
+  cli::cli_alert_info("End Time: {time_end}")
+  cli::cli_alert_info("Eclipsed: {as.numeric(time_diff)} sec")
   cli::cli_alert_info(" Attemps: {attp_sum}")
   cli::cli_alert_info(" Success: {success}")
   cli::cli_alert_info("    Fail: {fail}")

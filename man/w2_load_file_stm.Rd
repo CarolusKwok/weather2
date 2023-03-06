@@ -4,7 +4,14 @@
 \alias{w2_load_file_stm}
 \title{System tools: Download files from website using STORM mode}
 \usage{
-w2_load_file_stm(data, title = "test", attempt = 10, worker = 20)
+w2_load_file_stm(
+  data,
+  title = "test",
+  attempt = 10,
+  worker = 20,
+  threshold = 0.5,
+  list_fail = F
+)
 }
 \arguments{
 \item{data}{Data frame containing columns "URL", "DIR", "Info"}
@@ -14,6 +21,10 @@ w2_load_file_stm(data, title = "test", attempt = 10, worker = 20)
 \item{attempt}{Attempts to be made per download.}
 
 \item{worker}{Numbers of sessions to be open}
+
+\item{threshold}{Threshold of file size, when compared to the largest item to be installed in the list}
+
+\item{list_fail}{List failed-to-download items}
 }
 \value{
 

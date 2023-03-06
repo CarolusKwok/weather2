@@ -4,7 +4,14 @@
 \alias{w2_load_file}
 \title{System tools: Download files from website}
 \usage{
-w2_load_file(data, title, list_fail = F, attempt = 10, worker = 0)
+w2_load_file(
+  data,
+  title,
+  list_fail = F,
+  attempt = 10,
+  worker = 0,
+  threshold = 0.5
+)
 }
 \arguments{
 \item{data}{Data frame containing columns "URL", "DIR", "Info"}
@@ -16,6 +23,8 @@ w2_load_file(data, title, list_fail = F, attempt = 10, worker = 0)
 \item{attempt}{Attempts to be made per download.}
 
 \item{worker}{Numbers of sessions to be open}
+
+\item{threshold}{Threshold of file size, when compared to the largest item to be installed in the list}
 }
 \value{
 
