@@ -7,9 +7,9 @@
 hk_load_wind(
   lan = "en",
   type = c("wind", "gust"),
-  list_fail = F,
+  list_fail = T,
   dir = getwd(),
-  attempt = 10,
+  attempt = 5,
   worker = 1
 )
 }

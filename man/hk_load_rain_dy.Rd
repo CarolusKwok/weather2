@@ -6,9 +6,9 @@
 \usage{
 hk_load_rain_dy(
   lan = "en",
-  list_fail = F,
+  list_fail = T,
   dir = getwd(),
-  attempt = 10,
+  attempt = 5,
   worker = 1
 )
 }

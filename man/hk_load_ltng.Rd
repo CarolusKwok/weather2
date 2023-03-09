@@ -8,9 +8,9 @@ hk_load_ltng(
   time = weather2::tool_datetime(end = Sys.time(), by = "6 min", duration = "96 hour"),
   type = c("cc", "cg"),
   range = c(64, 256),
-  list_fail = F,
+  list_fail = T,
   dir = getwd(),
-  attempt = 10,
+  attempt = 5,
   worker = 1
 )
 }

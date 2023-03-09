@@ -13,7 +13,7 @@
 #'
 #' @examples hk_load_ltng()
 hk_load_ltng = function(time = weather2::tool_datetime(end = Sys.time(), by = "6 min", duration = "96 hour"),
-                        type = c("cc", "cg"), range = c(64, 256), list_fail = F, dir = getwd(), attempt = 10, worker = 1){
+                        type = c("cc", "cg"), range = c(64, 256), list_fail = T, dir = getwd(), attempt = 5, worker = 1){
   #Check
   if(!weather2::w2_check_internet(silent = T)){return(invisible())}
   if(weather2::w2_check_posixct(value = time, value_name = "time")){return(invisible())}
@@ -56,7 +56,7 @@ hk_load_ltng = function(time = weather2::tool_datetime(end = Sys.time(), by = "6
                                "/", substr(LDate, 1, 4),
                                "/", substr(LDate, 1, 6),
                                "/", LDate,
-                               "/", "LTNG", sprintf("%03d", range), type, "_", LDate, "_", LHour, ".png")) %>%
+                               "/", "HK_LTNG", sprintf("%03d", range), type, "_", LDate, "_", LHour, ".png")) %>%
     dplyr::arrange(Ltime) %>%
     dplyr::select(Info, URL, DIR) %>%
     dplyr::distinct()
@@ -66,5 +66,5 @@ hk_load_ltng = function(time = weather2::tool_datetime(end = Sys.time(), by = "6
                  stringr::str_flatten(type),
                  "(HKO)")
   weather2::w2_load_file(data = URL, attempt = attempt,
-                         title = title, list_fail = list_fail, worker = worker)
+                         title = title, list_fail = list_fail, worker = worker, check = F)
 }

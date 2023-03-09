@@ -12,7 +12,7 @@
 #'
 #' @examples hk_load_rain_hr()
 hk_load_rain_hr = function(time = weather2::tool_datetime(end = Sys.time(), by = "15 min", duration = "7 day"),
-                           lan = "en", list_fail = F, dir = getwd(), attempt = 10, worker = 1){
+                           lan = "en", list_fail = T, dir = getwd(), attempt = 5, worker = 1){
   #Check
   if(!weather2::w2_check_internet(silent = T)){return(invisible())}
   if(weather2::w2_check_posixct(time, "time")){return(invisible())}
@@ -51,9 +51,10 @@ hk_load_rain_hr = function(time = weather2::tool_datetime(end = Sys.time(), by =
                                "/", substr(LDate, 1, 4),
                                "/", substr(LDate, 1, 6),
                                "/", LDate,
-                               "/", "RAIN_hr", lan, "_", LDate, "_", LHour, ".png")) %>%
+                               "/", "HK_RAIN_hr", lan, "_", LDate, "_", LHour, ".png")) %>%
     dplyr::select(Info, URL, DIR) %>%
     dplyr::distinct()
     #Start to download
-    weather2::w2_load_file(data = URL, attempt = attempt, title = paste0("Hourly Rain distribution_", lan, " (HKO)"), list_fail = list_fail, worker = worker)
+    weather2::w2_load_file(data = URL, attempt = attempt, title = paste0("Hourly Rain distribution_", lan, " (HKO)"),
+                           list_fail = list_fail, worker = worker, check = F)
 }

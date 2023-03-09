@@ -4,21 +4,32 @@
 \alias{w2_load_fileset_seq}
 \title{System tools: Download files from website}
 \usage{
-w2_load_fileset_seq(data, title, subattempt = 1)
+w2_load_fileset_seq(
+  data,
+  title = "test_set_seq",
+  attempt = 5,
+  threshold = 0.5,
+  list_fail = T
+)
 }
 \arguments{
-\item{data}{Data frame containing columns "URL", "DIR", "Info"}
+\item{data}{Data frame containing columns "URL", "DIR", "Info", "Set"}
 
 \item{title}{Title of the downloaded data}
 
-\item{subattempt}{Attempts to be made per download URL to be attempted.}
+\item{attempt}{Attempts to be made per download URL to be attempted.}
+
+\item{threshold}{Threshold of file size, when compared to the largest item to be installed in the list}
+
+\item{list_fail}{List failed-to-download items}
 }
 \value{
 
 }
 \description{
-System tools: Download files from website
+Warning: This is not a "checked" function. Your input, if incorrect, may damage your system.
+Please use the w2_load_fileset() function instead.
 }
 \examples{
-w2_load_fileset_seq(data, title = "Macao tidal data", subattempt = 10)
+w2_load_fileset_seq(data, title = "Macao tidal data")
 }

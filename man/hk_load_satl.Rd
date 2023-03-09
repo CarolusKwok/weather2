@@ -8,9 +8,9 @@ hk_load_satl(
   time = weather2::tool_datetime(end = Sys.time(), by = "10 min", duration = "3 day"),
   magn = c(2, 4, 8),
   type = c("tc", "ir", "dc"),
-  list_fail = F,
+  list_fail = T,
   dir = getwd(),
-  attempt = 10,
+  attempt = 5,
   worker = 1
 )
 }

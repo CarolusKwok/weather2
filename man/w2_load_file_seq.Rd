@@ -4,23 +4,32 @@
 \alias{w2_load_file_seq}
 \title{System tools: Download files from website}
 \usage{
-w2_load_file_seq(data, title, list_fail = F, attempt = 10)
+w2_load_file_seq(
+  data,
+  title = "test_seq",
+  attempt = 5,
+  threshold = 0.5,
+  list_fail = T
+)
 }
 \arguments{
 \item{data}{Data frame containing columns "URL", "DIR", "Info"}
 
 \item{title}{Title of the downloaded data}
 
-\item{list_fail}{List failed-to-download items}
-
 \item{attempt}{Attempts to be made per download.}
+
+\item{threshold}{Threshold of file size, when compared to the largest item to be installed in the list}
+
+\item{list_fail}{List failed-to-download items}
 }
 \value{
 
 }
 \description{
-System tools: Download files from website
+Warning: This is not a "checked" function. Your input, if incorrect, may damage your system.
+Please use the w2_load_file() function instead.
 }
 \examples{
-w2_load_file_seq(data, title = "Global nc data", attempt = 10)
+w2_load_file_seq(data, title = "Global nc data")
 }

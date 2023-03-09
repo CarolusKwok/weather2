@@ -13,7 +13,7 @@
 #'
 #' @examples hk_load_satl()
 hk_load_satl = function(time = weather2::tool_datetime(end = Sys.time(), by = "10 min", duration = "3 day"),
-                        magn = c(2, 4, 8), type = c("tc", "ir", "dc"), list_fail = F, dir = getwd(), attempt = 10, worker = 1){
+                        magn = c(2, 4, 8), type = c("tc", "ir", "dc"), list_fail = T, dir = getwd(), attempt = 5, worker = 1){
   #Check
   if(!weather2::w2_check_internet(silent = T)){return(invisible())}
   if(weather2::w2_check_posixct(time, "time")){return(invisible())}
@@ -65,9 +65,10 @@ hk_load_satl = function(time = weather2::tool_datetime(end = Sys.time(), by = "1
                                "/", substr(LDate, 1, 4),
                                "/", substr(LDate, 1, 6),
                                "/", LDate,
-                               "/", "SATL", sprintf("%02d", magn), type, "_", LDate, "_", LHour, ".png")) %>%
+                               "/", "HK_SATL", sprintf("%02d", magn), type, "_", LDate, "_", LHour, ".png")) %>%
     dplyr::select(Info, URL, DIR)
   #Start to download
   title = paste0("Satellite Image_", stringr::str_flatten(sprintf("%02d", magn)), " ", stringr::str_flatten(type), " (HKO)")
-  weather2::w2_load_file(data = URL, attempt = attempt, title = title, list_fail = list_fail, worker = worker)
+  weather2::w2_load_file(data = URL, attempt = attempt, title = title,
+                         list_fail = list_fail, worker = worker, check = F)
 }

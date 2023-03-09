@@ -1,33 +1,42 @@
 #' System tools: Download files from website
 #'
-#' @param data Data frame containing columns "URL", "DIR", "Info"
+#' Warning: This is not a "checked" function. Your input, if incorrect, may damage your system.
+#' Please use the w2_load_fileset() function instead.
+#'
+#' @param data Data frame containing columns "URL", "DIR", "Info", "Set"
 #' @param title Title of the downloaded data
-#' @param subattempt Attempts to be made per download URL to be attempted.
+#' @param attempt Attempts to be made per download URL to be attempted.
+#' @param threshold Threshold of file size, when compared to the largest item to be installed in the list
+#' @param list_fail List failed-to-download items
 #'
 #' @return
 #' @export
 #'
-#' @examples w2_load_fileset_seq(data, title = "Macao tidal data", subattempt = 10)
-w2_load_fileset_seq = function(data, title, subattempt = 1){
-  #Check ####
-  if(!weather2::w2_check_internet(silent = T)){return(invisible())}
-  if(weather2::w2_check_str(value = title, value_name = "title")){return(invisible())}
-  if(weather2::w2_check_col_exist(data, Set, "data-Set")){return(invisible())}
-  if(weather2::w2_check_col_exist(data, DIR, "data-DIR")){return(invisible())}
-  if(weather2::w2_check_col_exist(data, URL, "data-URL")){return(invisible())}
-  if(weather2::w2_check_col_exist(data, Info, "data-Info")){return(invisible())}
-  if(weather2::w2_check_int(value = as.integer(subattempt), value_name = "subattempt")){return(invisible())}
+#' @examples w2_load_fileset_seq(data, title = "Macao tidal data")
+w2_load_fileset_seq = function(data, title = "test_set_seq", attempt = 5, threshold = 0.5, list_fail = T){
+  #Pre-set function ####
+  format_sets = function(data){
+    sets = unique(data$Set)
+    return(sets)
+  }
+
+  format_info = function(data){
+    info = unique(data$Info)
+    return(info)
+  }
 
   #Format the data ####
-  data = dplyr::filter(data, !file.exists(DIR))
-  sets = dplyr::select(data, Set) %>% dplyr::distinct() %>% .$Set
-  info = dplyr::select(data, Info) %>% dplyr::distinct() %>% .$Info
-
-  #Start download process
+  data = weather2::w2_load_help_formatdata(data) %>%
+    dplyr::filter(exist == F) %>%
+    dplyr::distinct()
+  sets = format_sets(data = data)
+  info = format_info(data = data)
   file_f = tryCatch(basename(data$DIR[1]), error = function(e){"NA"})
   file_n = ifelse(nrow(data) == 0, "NA",
                   tryCatch(basename(data$DIR[nrow(data)]), error = function(e){"NA"}))
 
+  #Start download process
+  time_start = Sys.time()
   cli::cli_text(cli::style_bold(cli::col_green("____________Initiate download process____________")))
   cli::cli_text("Info")
   cli::cli_alert_info("Downloading {.var {title}}")
@@ -40,58 +49,63 @@ w2_load_fileset_seq = function(data, title, subattempt = 1){
   #Start download ####
   defaultW = getOption("warn")
   options(warn = -1)
+
   attp_sum = 0
-  attp = 0
-  sattp = 0
-  read = 1
-  read_set = sets[read]
-  read_info = info[read]
 
   if(nrow(data) != 0){
-    cli::cli_progress_bar(format = "{cli::pb_spin} Loading data. Doing {read}/{length(sets)}: {read_info}[{attp};{sattp}]",
-                          auto_terminate = F)
-    cli::cli_progress_update(force = T)
+    sattp = 0
+    read = 1
+    attp = 1
+    read_set = sets[1]
+    read_info = info[1]
+    for(sattp in 1:attempt){
+      cli::cli_alert_warning(text = "Loading data. Doing attempt {sattp}.")
+      cli::cli_progress_bar(format = "{cli::pb_spin} Loading data. Doing {read}/{length(sets)}: {read_info}[{attp}]",
+                            auto_terminate = T)
+      if(length(sets) != 0){
+        for(read in 1:length(sets)){
+          read_set = sets[read]
+          temp_data = dplyr::filter(data, Set == read_set)
+          for(attp in 1:nrow(temp_data)){
+            read_info= temp_data$Info[attp]
+            read_DIR = temp_data$DIR[attp]
+            read_URL = temp_data$URL[attp]
+            cli::cli_progress_update(force = T)
 
-    for(read in 1:length(sets)){
-      read_set = sets[read]
-      read_info = info[read]
-      data2 = dplyr::filter(data, Set == read_set)
-
-      read_DIR = data2$DIR[1]
-      dir.create(path = dirname(read_DIR), showWarnings = F, recursive = T)
-      for (attp in 1:nrow(data2)){
-        read_URL = data2$URL[attp]
-
-        for (sattp in 1:subattempt){
-          cli::cli_progress_update(force = T)
-          tryCatch(download.file(url = read_URL, destfile = read_DIR, mode = "wb", quiet = T),
-                   error = function(e){})
-          if(file.exists(read_DIR) & (file.info(read_DIR)$size > 10)){break}
+            dir.create(path = dirname(read_DIR), showWarnings = F, recursive = T)
+            tryCatch(download.file(url = read_URL, destfile = read_DIR, mode = "wb", quiet = T),
+                     error = function(e){})
+            if(file.exists(read_DIR)){break}
+          }
+          attp_sum = attp_sum + attp
         }
-        if(file.exists(read_DIR) & (file.info(read_DIR)$size > 10)){break}
       }
-      attp_sum = attp_sum + (attp * subattempt - 1)
-      attp = 0
-      if(!file.exists(read_DIR)){cli::cli_alert_danger("Fail to download {read_info}")}
+      data = weather2::w2_load_help_formatdata(data)
+      max_size = max(data$size, na.rm = T)
+      sets = dplyr::filter(data, size <= (max_size * threshold)) %>% format_sets()
+      info = dplyr::filter(data, size <= (max_size * threshold)) %>% format_info()
     }
   }
   options(warn = defaultW)
   #Return download process information ####
-  success = dplyr::select(data, DIR) %>%
+  data = weather2::w2_load_help_formatdata(data)
+  success = dplyr::select(data, DIR, Info, exist) %>%
     dplyr::distinct() %>%
-    dplyr::mutate(exist = file.exists(DIR)) %>%
-    dplyr::filter(exist == T) %>%
-    nrow()
-  fail = dplyr::select(data, DIR) %>%
+    dplyr::filter(exist == T)
+  fail = dplyr::select(data, DIR, Info, exist) %>%
     dplyr::distinct() %>%
-    dplyr::mutate(exist = file.exists(DIR)) %>%
-    dplyr::filter(exist == F) %>%
-    nrow()
+    dplyr::filter(exist == F)
+  time_end = Sys.time()
+  time_diff= round(
+             as.numeric(
+             difftime(time_end, time_start, units = "secs")), digits = 3)
   cli::cli_text(cli::style_bold(cli::col_red("________________Download complete________________")))
   cli::cli_text("Info")
   cli::cli_alert_info("  End Time: {Sys.time()}")
-  cli::cli_alert_info("Subattempt: {attp_sum}")
-  cli::cli_alert_info("   Success: {success}")
-  cli::cli_alert_info("      Fail: {fail}")
+  cli::cli_alert_info("  Eclipsed: {time_diff} sec")
+  cli::cli_alert_info("   Attempt: {attp_sum}")
+  cli::cli_alert_info("   Success: {nrow(success)}")
+  cli::cli_alert_info("      Fail: {nrow(fail)}")
+  if(list_fail){weather2::w2_load_help_listfail(fail$Info)}
   cli::cli_text("")
 }

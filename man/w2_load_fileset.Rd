@@ -4,14 +4,30 @@
 \alias{w2_load_fileset}
 \title{System tools: Download files from website}
 \usage{
-w2_load_fileset(data, title, subattempt = 1, worker = 20)
+w2_load_fileset(
+  data,
+  title = "test",
+  attempt = 5,
+  worker = 0,
+  list_fail = T,
+  threshold = 0.5,
+  check = T
+)
 }
 \arguments{
-\item{data}{Data frame containing columns "URL", "DIR", "Info"}
+\item{data}{Data frame containing columns "URL", "DIR", "Info", "Set"}
 
 \item{title}{Title of the downloaded data}
 
-\item{subattempt}{Attempts to be made per download URL to be attempted.}
+\item{attempt}{Attempts to be made per download URL to be attempted}
+
+\item{worker}{Numbers of sessions to be open}
+
+\item{list_fail}{List failed-to-download items}
+
+\item{threshold}{Threshold of file size, when compared to the largest item to be installed in the list}
+
+\item{check}{Check the all of the parameters before execution, default as T}
 }
 \value{
 
@@ -20,5 +36,5 @@ w2_load_fileset(data, title, subattempt = 1, worker = 20)
 System tools: Download files from website
 }
 \examples{
-w2_load_fileset(data, title = "Macao tidal data", subattempt = 10, worker = 0)
+w2_load_fileset(data, title = "Macao tidal data", attempt = 10, worker = 20, list_fail = T, threshold = 0.5)
 }

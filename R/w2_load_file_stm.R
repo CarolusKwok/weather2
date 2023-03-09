@@ -1,5 +1,8 @@
 #' System tools: Download files from website using STORM mode
 #'
+#' Warning: This is not a "checked" function. Your input, if incorrect, may damage your system.
+#' Please use the w2_load_file() function instead.
+#'
 #' @param data Data frame containing columns "URL", "DIR", "Info"
 #' @param title Title of the downloaded data
 #' @param attempt Attempts to be made per download.
@@ -10,24 +13,16 @@
 #' @return
 #' @export
 #'
-#' @examples w2_load_file_stm(data, title = "Global nc data", attempt = 10, worker = 10)
-w2_load_file_stm = function(data, title = "test", attempt = 10, worker = 20, threshold = 0.5, list_fail = F){
+#' @examples w2_load_file_stm(data, title = "Global nc data")
+w2_load_file_stm = function(data, title = "test_stm", attempt = 5, worker = 20, threshold = 0.5, list_fail = T){
   #Pre-set function ####
   download_template = function(.x, .y){
     dir.create(path = dirname(.y), showWarnings = F, recursive = T)
     tryCatch(download.file(url = .x, destfile = .y, mode = "wb", quiet = T), error = function(e){})
   }
 
-  format_data = function(data){
-    data = dplyr::mutate(data,
-                         exist = file.exists(DIR),
-                         size = file.size(DIR),
-                         size = ifelse(is.na(size), 0, size))
-    return(data)
-  }
-
   #Format data ####
-  data = format_data(data) %>%
+  data = weather2::w2_load_help_formatdata(data) %>%
     dplyr::filter(exist == F) %>%
     dplyr::distinct()
   file_f = tryCatch(basename(data$DIR[1]), error = function(e){"NA"})
@@ -69,15 +64,15 @@ w2_load_file_stm = function(data, title = "test", attempt = 10, worker = 20, thr
       attp_sum = attp_sum + nrow(temp_data)
       furrr::future_map2(.x = temp_data$URL, .y = temp_data$DIR, .f = download_template)
 
-      data = format_data(data)
+      data = weather2::w2_load_help_formatdata(data)
       max_size = max(max_size, data$size, na.rm = T)
-      temp_data = dplyr::filter(data, size <= (max_size * 0.5))
+      temp_data = dplyr::filter(data, size <= (max_size * threshold))
     }
     future::plan("future::sequential")
   }
   options(warn = defaultW)
   #Return download process information ####
-  data = format_data(data)
+  data = weather2::w2_load_help_formatdata(data)
   success = dplyr::filter(data, exist == T)
   fail    = dplyr::filter(data, exist == F)
   time_end = Sys.time()
@@ -91,11 +86,6 @@ w2_load_file_stm = function(data, title = "test", attempt = 10, worker = 20, thr
   cli::cli_alert_info(" Attemps: {attp_sum}")
   cli::cli_alert_info(" Success: {nrow(success)}")
   cli::cli_alert_info("    Fail: {nrow(fail)}")
-  if(list_fail){
-    failed_items = fail$Info %>%
-      stringr::str_flatten(collapse = ", ")
-    cli::cli_alert_info("Failed Items as follow:")
-    cli::cli_bullets(c(" " = "{failed_items}"))
-  }
+  if(list_fail){weather2::w2_load_help_listfail(fail$Info)}
   cli::cli_text("")
 }

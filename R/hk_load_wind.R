@@ -11,7 +11,7 @@
 #' @export
 #'
 #' @examples hk_load_wind()
-hk_load_wind = function(lan = "en", type = c("wind", "gust"), list_fail = F, dir = getwd(), attempt = 10, worker = 1){
+hk_load_wind = function(lan = "en", type = c("wind", "gust"), list_fail = T, dir = getwd(), attempt = 5, worker = 1){
   #Check
   if(!weather2::w2_check_internet(silent = T)){return(invisible())}
   if(weather2::w2_check_lan(lan, "lan")){return(invisible())}
@@ -71,7 +71,7 @@ hk_load_wind = function(lan = "en", type = c("wind", "gust"), list_fail = F, dir
                                  "/", substr(LDate, 1, 4),
                                  "/", substr(LDate, 1, 6),
                                  "/", LDate,
-                                 "/", "WIND(", type, ")", lan, "_", LDate, "_", LHour, ".png")) %>%
+                                 "/", "HK_WIND(", type, ")", lan, "_", LDate, "_", LHour, ".png")) %>%
       dplyr::select(Info, URL, DIR) %>%
       dplyr::distinct()
 
@@ -81,6 +81,7 @@ hk_load_wind = function(lan = "en", type = c("wind", "gust"), list_fail = F, dir
 
     #Start to download
     #return(URL)
-    weather2::w2_load_file(data = URL, attempt = attempt, title = paste0("Wind distribution_", type, " (HKO)"), list_fail = list_fail, worker = worker)
+    weather2::w2_load_file(data = URL, attempt = attempt, title = paste0("Wind distribution_", type, " (HKO)"),
+                           list_fail = list_fail, worker = worker, check = F)
   }
 }

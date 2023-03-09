@@ -7,14 +7,16 @@
 hk_load_wxph(
   time = weather2::tool_datetime(end = Sys.time(), by = "10 min", duration = "3 day"),
   station = "all",
-  list_fail = F,
+  list_fail = T,
   dir = getwd(),
-  attempt = 10,
+  attempt = 5,
   worker = 1
 )
 }
 \arguments{
 \item{time}{Date/time to download}
+
+\item{station}{Stations selected for the task, read tool_hk_wxph() tibble for more information}
 
 \item{list_fail}{List failed-to-download items}
 
@@ -23,10 +25,6 @@ hk_load_wxph(
 \item{attempt}{Attempts to be made per file to download.}
 
 \item{worker}{Numbers of sessions to be open}
-
-\item{magn}{Satellite image magnification. Accepts 2/ 4/ 8, or any combinations}
-
-\item{type}{Type of satellite image. Accepts "tc" (True color), "ir" (Infrared), "dc" (Deep convection), or any combinations.}
 }
 \value{
 

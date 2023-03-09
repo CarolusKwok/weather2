@@ -9,8 +9,10 @@ mo_load_tide(
     \%>\% weather2::tool_datetime_select(by = "min", value = 0),
   dir = getwd(),
   attempt = 900,
-  subattempt = 1,
-  worker = 1
+  subattempt = 5,
+  worker = 1,
+  list_fail = T,
+  threshold = 0.4
 )
 }
 \arguments{
@@ -21,6 +23,12 @@ mo_load_tide(
 \item{attempt}{Attempts to be made per file to download.}
 
 \item{subattempt}{Attempts to be made per attempt to download.}
+
+\item{worker}{Numbers of sessions to be open}
+
+\item{list_fail}{List failed-to-download items}
+
+\item{threshold}{Threshold of file size, when compared to the largest item to be installed in the list}
 }
 \value{
 

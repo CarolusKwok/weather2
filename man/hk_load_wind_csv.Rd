@@ -7,9 +7,9 @@
 hk_load_wind_csv(
   time = weather2::tool_datetime(end = Sys.time(), by = "10 min", duration = "7 day"),
   lan = "en",
-  list_fail = F,
+  list_fail = T,
   dir = getwd(),
-  attempt = 10,
+  attempt = 5,
   worker = 1
 )
 }

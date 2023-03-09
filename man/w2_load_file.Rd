@@ -6,11 +6,12 @@
 \usage{
 w2_load_file(
   data,
-  title,
-  list_fail = F,
-  attempt = 10,
+  title = "test",
+  attempt = 5,
   worker = 0,
-  threshold = 0.5
+  list_fail = T,
+  threshold = 0.5,
+  check = T
 )
 }
 \arguments{
@@ -18,13 +19,15 @@ w2_load_file(
 
 \item{title}{Title of the downloaded data}
 
-\item{list_fail}{List failed-to-download items}
-
 \item{attempt}{Attempts to be made per download.}
 
 \item{worker}{Numbers of sessions to be open}
 
+\item{list_fail}{List failed-to-download items}
+
 \item{threshold}{Threshold of file size, when compared to the largest item to be installed in the list}
+
+\item{check}{Check the all of the parameters before execution, default as T}
 }
 \value{
 
@@ -33,5 +36,5 @@ w2_load_file(
 System tools: Download files from website
 }
 \examples{
-w2_load_file(data, title = "Global nc data", attempt = 10)
+w2_load_file(data, title = "Global nc data", attempt = 10, worker = 10, list_fail = T, threshold = 0.5)
 }

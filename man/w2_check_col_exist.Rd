@@ -2,23 +2,22 @@
 % Please edit documentation in R/w2_check_col_exist.R
 \name{w2_check_col_exist}
 \alias{w2_check_col_exist}
-\title{System tool: Check if an object is a column name under data}
+\title{System tool: Check if a column exists in a dataframe}
 \usage{
-w2_check_col_exist(data, value, value_name)
+w2_check_col_exist(data, data_name, value, value_name)
 }
 \arguments{
-\item{data}{Data}
+\item{data}{data}
 
-\item{value}{Value of the check item}
+\item{data_name}{name of the data}
 
-\item{value_name}{Value's name as a string}
+\item{value}{value}
+
+\item{value_name}{name of the value}
 }
 \value{
 
 }
 \description{
-System tool: Check if an object is a column name under data
-}
-\examples{
-w2_check_col_exist(data, info, "info")
+System tool: Check if a column exists in a dataframe
 }

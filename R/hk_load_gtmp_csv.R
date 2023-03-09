@@ -12,7 +12,7 @@
 #'
 #' @examples hk_load_gtmp_csv()
 hk_load_gtmp_csv = function(time = weather2::tool_datetime(end = Sys.time(), by = "10 min", duration = "7 day"), lan = "en",
-                            list_fail = F, dir = getwd(), attempt = 10, worker = 1){
+                            list_fail = T, dir = getwd(), attempt = 5, worker = 1){
   #Check
   if(!weather2::w2_check_internet(silent = T)){return(invisible())}
   if(weather2::w2_check_posixct(value = time, value_name = "time")){return(invisible())}
@@ -57,11 +57,11 @@ hk_load_gtmp_csv = function(time = weather2::tool_datetime(end = Sys.time(), by 
                                "/", substr(PDate, 1, 4),
                                "/", substr(PDate, 1, 6),
                                "/", PDate,
-                               "/", "GTMP", lan, "-", PDate, "-", PHour, ".csv")) %>%
+                               "/", "HK_GTMP", lan, "_", PDate, "_", PHour, ".csv")) %>%
     dplyr::filter(!(0801 < as.numeric(PHour) & as.numeric(PHour) < 1700)) %>%
     dplyr::select(Info, URL, DIR) %>%
     dplyr::distinct()
     #Start to download
     weather2::w2_load_file(data = URL, attempt = attempt, title = "Grass Temperature Information (HKO)",
-                           list_fail = list_fail, worker = worker)
+                           list_fail = list_fail, worker = worker, check = F)
 }

@@ -6,11 +6,11 @@
 \usage{
 w2_load_file_stm(
   data,
-  title = "test",
-  attempt = 10,
+  title = "test_stm",
+  attempt = 5,
   worker = 20,
   threshold = 0.5,
-  list_fail = F
+  list_fail = T
 )
 }
 \arguments{
@@ -30,8 +30,9 @@ w2_load_file_stm(
 
 }
 \description{
-System tools: Download files from website using STORM mode
+Warning: This is not a "checked" function. Your input, if incorrect, may damage your system.
+Please use the w2_load_file() function instead.
 }
 \examples{
-w2_load_file_stm(data, title = "Global nc data", attempt = 10, worker = 10)
+w2_load_file_stm(data, title = "Global nc data")
 }
