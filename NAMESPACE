@@ -3,6 +3,7 @@
 export("%>%")
 export(calc_smooth)
 export(calc_smooth_lm)
+export(calc_smooth_ma)
 export(calc_time_int)
 export(draw_asnd)
 export(draw_hodo)
