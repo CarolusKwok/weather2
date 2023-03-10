@@ -15,6 +15,8 @@
 #'
 #' @examples w2_load_file_stm(data, title = "Global nc data")
 w2_load_file_stm = function(data, title = "test_stm", attempt = 5, worker = 20, threshold = 0.5, list_fail = T){
+  if(!weather2::w2_check_internet()){return(invisible())}
+
   #Pre-set function ####
   download_template = function(.x, .y){
     dir.create(path = dirname(.y), showWarnings = F, recursive = T)

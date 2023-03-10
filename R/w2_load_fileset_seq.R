@@ -14,6 +14,7 @@
 #'
 #' @examples w2_load_fileset_seq(data, title = "Macao tidal data")
 w2_load_fileset_seq = function(data, title = "test_set_seq", attempt = 5, threshold = 0.5, list_fail = T){
+  if(!weather2::w2_check_internet()){return(invisible())}
   #Pre-set function ####
   format_sets = function(data){
     sets = unique(data$Set)

@@ -16,6 +16,7 @@
 #' @examples w2_load_fileset_stm(data, title = "Macao tidal data", attempt = 3, worker = 10, threshold = 0, list_fail = T)
 #'
 w2_load_fileset_stm = function(data, title = "test_set_stm", attempt = 5, worker = 20, threshold = 0.5, list_fail = T){
+  if(!weather2::w2_check_internet()){return(invisible())}
   #Preset functions ####
   download_list = function(.x, .y){
     data_t = dplyr::filter(.x, Set == .y)

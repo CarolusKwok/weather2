@@ -2,24 +2,30 @@
 #'
 #' @param data The Data frame
 #' @param based A column within dataframe. This column must be "numeric-able", must not contain NAs, and must be unique
-#' @param value A column within data
+#' @param value A column within data. This column must contain NAs
 #' @param trailing Remove trailing NAs within the value if T
+#' @param name_as Name of the new smoothed column. Default as predict_xxx, where xxx is the column name of the based.
 #'
 #' @return
 #' @export
 #'
 #' @examples calc_smooth_lm(data, x, y, trailing = F)
-calc_smooth_lm = function(data, based, value, trailing = T){
+calc_smooth_lm = function(data, based, value, trailing = T, name_as = ""){
   #Check ####
-  if(weather2::w2_check_type_dataframe(data = data, data_name = "data")){return(invisible())}
-  if(weather2::w2_check_col_exist(data = data, data_name = "data", value = {{based}}, value_name = "based")){return(invisible())}
-  if(weather2::w2_check_col_exist(data = data, data_name = "data", value = {{value}}, value_name = "value")){return(invisible())}
-  if(weather2::w2_check_type_logical(value = trailing, value_name = "trailing")){return(invisible())}
+  if(weather2::w2_check_type_dataframe(data = data, data_name = "data")){return(data)}
+  if(weather2::w2_check_col_exist(data = data, data_name = "data", value = {{based}}, value_name = "based")){return(data)}
+  if(weather2::w2_check_col_exist(data = data, data_name = "data", value = {{value}}, value_name = "value")){return(data)}
+  if(weather2::w2_check_type_logical(value = trailing, value_name = "trailing")){return(data)}
+  if(weather2::w2_check_type_character(value = name_as, value_name = "name_as")){return(data)}
 
   data0 = dplyr::select(data, x = {{based}})$x
-  if(weather2::w2_check_list_na(data = data0, data_name = "based")){return(invisible())}
-  if(weather2::w2_check_list_numericable(data = data0, data_name = "based")){return(invisible())}
-  if(weather2::w2_check_list_unique(data = data0, data_name = "based")){return(invisible())}
+  if(weather2::w2_check_list_na(data = data0, data_name = "based", NAs = F)){return(data)}
+  if(weather2::w2_check_list_numericable(data = data0, data_name = "based")){return(data)}
+  if(weather2::w2_check_list_unique(data = data0, data_name = "based")){return(data)}
+
+  data0 = dplyr::select(data, x = {{value}})$x
+  if(weather2::w2_check_list_na(data = data0, data_name = "value", NAs = T)){return(data)}
+  if(weather2::w2_check_list_numericable(data = data0, data_name = "value")){return(data)}
 
   #Get text name ####
   name_based = colnames(dplyr::select(data, {{based}}))
@@ -44,28 +50,22 @@ calc_smooth_lm = function(data, based, value, trailing = T){
     dplyr::arrange(x) %>%
     dplyr::filter(nas == F) %>%
     dplyr::slice(2:(dplyr::n()-1)) %>%
-    dplyr::mutate(groups = ceiling((1:dplyr::n())/2))
+    dplyr::mutate(groups = as.factor(ceiling((1:dplyr::n())/2)))
 
   #left_join data0 to have groups, fill the gaps between groups, add a predict column with all nas (numeric)
   data0 = dplyr::left_join(x = data0, y = dplyr::select(.data = df_grp, x, groups), by = "x") %>%
-    tidyr::fill(groups, .direction = "downup") %>%
-    dplyr::mutate(predict = NA_real_)
+    tidyr::fill(groups, .direction = "downup")
 
   #create lm and the prediction. Add the prediction to data0
-  for(i in 1:max(df_grp$groups)){
-    lm = lm(formula = y~x, data = dplyr::filter(df_grp, groups == i), singular.ok = T)
-    prediction = predict(object = lm, newdata = data0)
-    data0 = dplyr::mutate(data0,
-                          predict_temp = prediction,
-                          predict = ifelse(groups == i, predict_temp, predict))
-  }
-  data0 = dplyr::select(data0, -predict_temp, -groups)
+  #find distinct, n replace the predict with NA if its a list of nas at the top n bottom
+  lm = lm(formula = y~x * groups, data = df_grp, singular.ok = T)
+  prediction = predict(object = lm, newdata = data0)
+  data0 = dplyr::mutate(data0,
+                        predict = ifelse(nas == F, y, prediction)) %>%
+    dplyr::select(-groups) %>%
+    dplyr::distinct()
 
   #if there is a known value, replace the predict with the known value
-  #find distinct, n replace the predict with NA if its a list of nas at the top n bottom
-  data0 = dplyr::mutate(data0,
-                        predict = ifelse(nas == F, y, predict)) %>%
-    dplyr::distinct()
   if(trailing){
     na_first = data0$nas[1]
     na_last  = data0$nas[nrow(data0)]
@@ -81,7 +81,10 @@ calc_smooth_lm = function(data, based, value, trailing = T){
     }
   }
   #return the smoothed data! first guess the appropriate column name
-  expected_colname = weather2::w2_get_colname(data, paste0("predict_", name_value))
+  if(name_as == ""){
+    name_as = paste0("predict_", name_value)
+  }
+  expected_colname = weather2::w2_get_colname(data, name_as)
   data = dplyr::mutate(data, "{expected_colname}" := data0$predict)
 
   return(data)

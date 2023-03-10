@@ -4,12 +4,14 @@
 \alias{w2_check_list_na}
 \title{System tool: Check if a list contains NA}
 \usage{
-w2_check_list_na(data, data_name)
+w2_check_list_na(data, data_name, NAs = F)
 }
 \arguments{
 \item{data}{data}
 
 \item{data_name}{name of the data}
+
+\item{NAs}{check if it should contains NAs(T) or not contain NAs(F)}
 }
 \value{
 

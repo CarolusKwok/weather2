@@ -4,16 +4,18 @@
 \alias{calc_smooth_lm}
 \title{Calculate by smoothing and filling the columns, with linear models}
 \usage{
-calc_smooth_lm(data, based, value, trailing = T)
+calc_smooth_lm(data, based, value, trailing = T, name_as = "")
 }
 \arguments{
 \item{data}{The Data frame}
 
 \item{based}{A column within dataframe. This column must be "numeric-able", must not contain NAs, and must be unique}
 
-\item{value}{A column within data}
+\item{value}{A column within data. This column must contain NAs}
 
 \item{trailing}{Remove trailing NAs within the value if T}
+
+\item{name_as}{Name of the new smoothed column. Default as predict_xxx, where xxx is the column name of the based.}
 }
 \value{
 

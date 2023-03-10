@@ -14,6 +14,8 @@
 #'
 #' @examples w2_load_file_seq(data, title = "Global nc data")
 w2_load_file_seq = function(data, title = "test_seq", attempt = 5, threshold = 0.5, list_fail = T){
+  if(!weather2::w2_check_internet()){return(invisible())}
+
   #Format download process information ####
   data = weather2::w2_load_help_formatdata(data) %>%
     dplyr::filter(exist == F) %>%
