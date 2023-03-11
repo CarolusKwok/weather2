@@ -4,7 +4,15 @@
 \alias{calc_smooth_ma}
 \title{Calculate by smoothing the column, by moving average}
 \usage{
-calc_smooth_ma(data, based, value, side = "center", weight = 3)
+calc_smooth_ma(
+  data,
+  based,
+  value,
+  type = "center",
+  weight = 3,
+  name_as = "",
+  NAs = T
+)
 }
 \arguments{
 \item{data}{The Data frame}
@@ -13,16 +21,17 @@ calc_smooth_ma(data, based, value, side = "center", weight = 3)
 
 \item{value}{A column within data}
 
-\item{side}{Accepts 1 string of "left", "center", or "right"}
+\item{type}{Accepts 1 string of "left", "center", or "right"}
 
-\item{weight}{weighting or the size of the window}
+\item{weight}{Weighting or the size of the window}
+
+\item{name_as}{Name of the new smoothed column. Default as predict_xxx, where xxx is the column name of the based.}
+
+\item{NAs}{Removes NA in the smoothed column by treating missing data}
 }
 \value{
 
 }
 \description{
 Calculate by smoothing the column, by moving average
-}
-\examples{
-calc_smooth_ma(data, x, y)
 }
