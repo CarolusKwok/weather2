@@ -23,7 +23,7 @@ calc_smooth_ma(
 
 \item{type}{Accepts 1 string of "left", "center", or "right"}
 
-\item{weight}{Weighting or the size of the window}
+\item{weight}{Weighting or the size of the window as an integer}
 
 \item{name_as}{Name of the new smoothed column. Default as predict_xxx, where xxx is the column name of the based.}
 
@@ -34,4 +34,7 @@ calc_smooth_ma(
 }
 \description{
 Calculate by smoothing the column, by moving average
+}
+\examples{
+calc_smooth_ma(data, x, y, weight = 7)
 }

@@ -58,13 +58,18 @@ calc_smooth_lm = function(data, based, value, trailing = T, name_as = ""){
 
   #create lm and the prediction. Add the prediction to data0
   #find distinct, n replace the predict with NA if its a list of nas at the top n bottom
-  lm = lm(formula = y~x * groups, data = df_grp, singular.ok = T)
-  prediction = predict(object = lm, newdata = data0)
+  if(length(unique(df_grp$groups)) == 1){
+    lm = lm(formula = y~x, data = df_grp, singular.ok = T)
+    prediction = predict(object = lm, newdata = data0)
+  } else {
+    lm = lm(formula = y~x * groups, data = df_grp, singular.ok = T)
+    prediction = predict(object = lm, newdata = data0)
+  }
+
   data0 = dplyr::mutate(data0,
                         predict = ifelse(nas == F, y, prediction)) %>%
     dplyr::select(-groups) %>%
     dplyr::distinct()
-
   #if there is a known value, replace the predict with the known value
   if(trailing){
     na_first = data0$nas[1]
