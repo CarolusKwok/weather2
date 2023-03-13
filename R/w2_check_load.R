@@ -15,7 +15,7 @@ w2_check_load = function(data, title, attempt, worker, list_fail, threshold){
   flag = F
   #Start checking!
   if(!weather2::w2_check_internet()){flag = T}
-  if(weather2::w2_check_type_dataframe(data = data, data_name = "data")){
+  if(weather2::w2_check_type_dataframe(value = data, value_name = "data")){
     flag = T
   } else {
     if(weather2::w2_check_col_exist(data = data, data_name = "data", value = DIR, value_name = "DIR")){flag = T}

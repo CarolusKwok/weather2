@@ -14,7 +14,7 @@
 #' @examples calc_smooth_ma(data, x, y, weight = 7)
 calc_smooth_ma = function(data, based, value, type = "center", weight = 3, name_as = "", NAs = T){
   #Check ####
-  if(weather2::w2_check_type_dataframe(data = data, data_name = "data")){return(data)}
+  if(weather2::w2_check_type_dataframe(value = data, value_name = "data")){return(data)}
   if(weather2::w2_check_col_exist(data = data, data_name = "data", value = {{based}}, value_name = "based")){return(data)}
   if(weather2::w2_check_col_exist(data = data, data_name = "data", value = {{value}}, value_name = "value")){return(data)}
   if(weather2::w2_check_type_character(value = type, value_name = "type")){return(data)}

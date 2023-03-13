@@ -12,7 +12,7 @@
 #' @examples calc_smooth_sp(data, x, y, df = 0.7*nrow(data), name_as = "")
 calc_smooth_sp = function(data, based, value, df, name_as = ""){
   #Check ####
-  if(weather2::w2_check_type_dataframe(data = data, data_name = "data")){return(data)}
+  if(weather2::w2_check_type_dataframe(value = data, value_name = "data")){return(data)}
   if(weather2::w2_check_col_exist(data = data, data_name = "data", value = {{based}}, value_name = "based")){return(data)}
   if(weather2::w2_check_col_exist(data = data, data_name = "data", value = {{value}}, value_name = "value")){return(data)}
   if(weather2::w2_check_type_numeric(value = df, value_name = "df")){return(data)}
