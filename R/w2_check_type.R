@@ -51,9 +51,9 @@ w2_check_type_character = function(value, value_name){
 #' @examples
 w2_check_type_dataframe = function(value, value_name){
   if(weather2::w2_check_type_help(value = value, value_name = value_name)){return(T)}
-  if(!is.data.frame(data)){
-    cli::cli_text("Error: {.var {data_name}} must be a dataframe.")
-    cli::cli_bullets(c("x" = "You supplied {.var {class(data)}}"))
+  if(!is.data.frame(value)){
+    cli::cli_text("Error: {.var {value_name}} must be a dataframe.")
+    cli::cli_bullets(c("x" = "You supplied {.var {class(value)}}"))
     return(T)
   }
   return(F)
