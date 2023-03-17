@@ -15,7 +15,6 @@ hk_load_rain_hr = function(time = weather2::tool_datetime(end = Sys.time(), by =
                            lan = "en", list_fail = T, dir = getwd(), attempt = 5, worker = 1){
   #Check
   if(!weather2::w2_check_internet(silent = T)){return(invisible())}
-  if(weather2::w2_check_posixct(time, "time")){return(invisible())}
   if(weather2::w2_check_lan(lan, "lan")){return(invisible())}
   if(weather2::w2_check_int(value = as.integer(attempt), value_name = "attempt")){return(invisible())}
 

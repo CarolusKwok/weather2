@@ -10,7 +10,7 @@
 #' @examples tool_datetime_select(time, "min", 0)
 tool_datetime_select = function(time, by, value){
   #Check
-  if(weather2::w2_check_posixct(value = time, value_name = "time")){return(invisible())}
+  if(weather2::w2_check_type_POSIXct(value = time, value_name = "time")){return(invisible())}
   if(weather2::w2_check_length(value = by, length = 1, value_name = "by")){return(invisible())}
 
   #Start

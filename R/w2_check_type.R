@@ -115,3 +115,23 @@ w2_check_type_numeric = function(value, value_name){
   }
   return(F)
 }
+
+
+#' System tool: Check if an object is a POSIXct
+#'
+#' @param value value
+#' @param value_name name of the value
+#'
+#' @return
+#' @export
+#'
+#' @examples
+w2_check_type_POSIXct = function(value, value_name){
+  if(weather2::w2_check_type_help(value = value, value_name = value_name)){return(T)}
+  if(!lubridate::is.POSIXct(value)){
+    cli::cli_text('Error: {.var {value_name}} must be a POSIXct')
+    cli::cli_bullets(c("x" = 'You supplied a {.var {class(value)}}!'))
+    return(T)
+  }
+  return(F)
+}

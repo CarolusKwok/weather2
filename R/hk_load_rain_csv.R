@@ -15,7 +15,6 @@ hk_load_rain_csv = function(time = weather2::tool_datetime(end = Sys.time(), by 
                             list_fail = T, dir = getwd(), attempt = 5, worker = 1){
   #Check
   if(!weather2::w2_check_internet(silent = T)){return(invisible())}
-  if(weather2::w2_check_posixct(value = time, value_name = "time")){return(invisible())}
   if(weather2::w2_check_lan(value = lan, value_name = "lan")){return(invisible())}
   if(weather2::w2_check_int(value = as.integer(attempt), value_name = "attempt")){return(invisible())}
   #Additional variables

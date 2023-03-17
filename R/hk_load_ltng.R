@@ -16,7 +16,6 @@ hk_load_ltng = function(time = weather2::tool_datetime(end = Sys.time(), by = "6
                         type = c("cc", "cg"), range = c(64, 256), list_fail = T, dir = getwd(), attempt = 5, worker = 1){
   #Check
   if(!weather2::w2_check_internet(silent = T)){return(invisible())}
-  if(weather2::w2_check_posixct(value = time, value_name = "time")){return(invisible())}
   if(sum(type == "cc" | type == "cg") != length(type)){
     cli::cli_text('Error: {.var type} can only be "cc", "cg" or both.')
     cli::cli_bullets(c("x" = 'You supplied {.var {type}}.'))

@@ -16,7 +16,6 @@ hk_load_satl = function(time = weather2::tool_datetime(end = Sys.time(), by = "1
                         magn = c(2, 4, 8), type = c("tc", "ir", "dc"), list_fail = T, dir = getwd(), attempt = 5, worker = 1){
   #Check
   if(!weather2::w2_check_internet(silent = T)){return(invisible())}
-  if(weather2::w2_check_posixct(time, "time")){return(invisible())}
   if(sum(magn == 2 | magn == 4 | magn == 8) != length(magn)){
     cli::cli_text('Error: {.var magn} can only be 2, 4, 8, or any combination.')
     cli::cli_bullets(c("x" = 'You supplied {.var {magn}}.'))
