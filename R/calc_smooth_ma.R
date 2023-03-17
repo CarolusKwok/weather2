@@ -28,7 +28,6 @@ calc_smooth_ma = function(data, based, value, type = "center", weight = 3, name_
   if(weather2::w2_check_list_unique(data = data0, data_name = "based")){return(data)}
 
   data0 = dplyr::select(data, x = {{value}})$x
-  if(weather2::w2_check_list_na(data = data0, data_name = "value", NAs = T)){return(data)}
   if(weather2::w2_check_list_numericable(data = data0, data_name = "value")){return(data)}
 
   rows = nrow(data)
