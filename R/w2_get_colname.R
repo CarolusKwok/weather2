@@ -9,8 +9,8 @@
 #' @examples w2_get_colname(data, "predict")
 w2_get_colname = function(data, name){
   #Check ####
-  if(weather2::w2_check_type_dataframe(value = data, value_name = "data")){return(invisible())}
-  if(weather2::w2_check_type_character(value = name, value_name = "name")){return(invisible())}
+  if(weather2::sys.ck.class_data.frame(value = data, value_name = "data")){return(invisible())}
+  if(weather2::sys.ck.class_character(value = name, value_name = "name")){return(invisible())}
 
   #Process... pretty self-explanatory ####
   colnames_data = colnames(data)

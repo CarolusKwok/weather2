@@ -23,11 +23,11 @@ w2_check_item_value = function(item, item_name, expect, type = "="){
     cli::cli_text('Error: {.var expect} must be supplied')
     cli::cli_bullets(c("x" = 'You supplied nothing!'))
     flag = T
-  } else if(weather2::w2_check_type_numeric(value = item, value_name = "item")){
+  } else if(weather2::sys.ck.class_numeric(value = item, value_name = "item")){
     flag = T
-  } else if(weather2::w2_check_type_numeric(value = expect, value_name = "expect")){
+  } else if(weather2::sys.ck.class_numeric(value = expect, value_name = "expect")){
     flag = T
-  } else if(weather2::w2_check_list_item(item = type, item_name = "type", list = c("=", "<", ">", "<=", ">="))){
+  } else if(weather2::sys.ck.list_item.in(list = type, list_name = "type", expected = c("=", "<", ">", "<=", ">="))){
     flag = T
   } else {
     if(!(item == expect) & type == "="){

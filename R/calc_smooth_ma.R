@@ -14,26 +14,26 @@
 #' @examples calc_smooth_ma(data, x, y, weight = 7)
 calc_smooth_ma = function(data, based, value, type = "center", weight = 3, name_as = "", NAs = T){
   #Check ####
-  if(weather2::w2_check_type_dataframe(value = data, value_name = "data")){return(data)}
+  if(weather2::sys.ck.class_data.frame(value = data, value_name = "data")){return(data)}
   if(weather2::w2_check_col_exist(data = data, data_name = "data", value = {{based}}, value_name = "based")){return(data)}
   if(weather2::w2_check_col_exist(data = data, data_name = "data", value = {{value}}, value_name = "value")){return(data)}
-  if(weather2::w2_check_type_character(value = type, value_name = "type")){return(data)}
-  if(weather2::w2_check_list_item(item = type, item_name = "type", list = c("center", "top", "bottom"))){return(data)}
-  if(weather2::w2_check_type_numeric(value = weight, value_name = "weight")){return(data)}
-  if(weather2::w2_check_type_logical(value = NAs, value_name = "NAs")){return(data)}
+  if(weather2::sys.ck.class_character(value = type, value_name = "type")){return(data)}
+  if(weather2::sys.ck.list_item.in(list = type, list_name = "type", expected = c("center", "top", "bottom"))){return(data)}
+  if(weather2::sys.ck.class_numeric(value = weight, value_name = "weight")){return(data)}
+  if(weather2::sys.ck.class_logical(value = NAs, value_name = "NAs")){return(data)}
 
   data0 = dplyr::select(data, x = {{based}})$x
-  if(weather2::w2_check_list_na(data = data0, data_name = "based", NAs = F)){return(data)}
-  if(weather2::w2_check_list_numericable(data = data0, data_name = "based")){return(data)}
-  if(weather2::w2_check_list_unique(data = data0, data_name = "based")){return(data)}
+  if(weather2::sys.ck.list_has.na(list = data0, list_name = "based")){return(data)}
+  if(weather2::sys.ck.list_numericable(list = data0, list_name = "based")){return(data)}
+  if(weather2::sys.ck.list_item.unique(list = data0, list_name = "based")){return(data)}
 
   data0 = dplyr::select(data, x = {{value}})$x
-  if(weather2::w2_check_list_numericable(data = data0, data_name = "value")){return(data)}
+  if(weather2::sys.ck.list_numericable(list = data0, list_name = "value")){return(data)}
 
   rows = nrow(data)
   if(length(weight) == 1){
     weight = as.integer(weight)
-    if(weather2::w2_check_type_integer(value = weight, value_name = "weight")){return(data)}
+    if(weather2::sys.ck.class_integer(value = weight, value_name = "weight")){return(data)}
     if(weather2::w2_check_item_value(item = weight, item_name = "weight", expect = rows, type = "<=")){return(data)}
   } else if(length(weight) > 1){
     len = length(weight)

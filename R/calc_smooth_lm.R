@@ -12,20 +12,20 @@
 #' @examples calc_smooth_lm(data, x, y, trailing = F)
 calc_smooth_lm = function(data, based, value, trailing = T, name_as = ""){
   #Check ####
-  if(weather2::w2_check_type_dataframe(value = data, value_name = "data")){return(data)}
+  if(weather2::sys.ck.class_data.frame(value = data, value_name = "data")){return(data)}
   if(weather2::w2_check_col_exist(data = data, data_name = "data", value = {{based}}, value_name = "based")){return(data)}
   if(weather2::w2_check_col_exist(data = data, data_name = "data", value = {{value}}, value_name = "value")){return(data)}
-  if(weather2::w2_check_type_logical(value = trailing, value_name = "trailing")){return(data)}
-  if(weather2::w2_check_type_character(value = name_as, value_name = "name_as")){return(data)}
+  if(weather2::sys.ck.class_logical(value = trailing, value_name = "trailing")){return(data)}
+  if(weather2::sys.ck.class_character(value = name_as, value_name = "name_as")){return(data)}
 
   data0 = dplyr::select(data, x = {{based}})$x
-  if(weather2::w2_check_list_na(data = data0, data_name = "based", NAs = F)){return(data)}
-  if(weather2::w2_check_list_numericable(data = data0, data_name = "based")){return(data)}
-  if(weather2::w2_check_list_unique(data = data0, data_name = "based")){return(data)}
+  if(weather2::sys.ck.list_has.na(list = data0, list_name = "based")){return(data)}
+  if(weather2::sys.ck.list_numericable(list = data0, list_name = "based")){return(data)}
+  if(weather2::sys.ck.list_item.unique(list = data0, list_name = "based")){return(data)}
 
   data0 = dplyr::select(data, x = {{value}})$x
-  if(weather2::w2_check_list_na(data = data0, data_name = "value", NAs = T)){return(data)}
-  if(weather2::w2_check_list_numericable(data = data0, data_name = "value")){return(data)}
+  if(weather2::sys.ck.list_has.na(list = data0, list_name = "value")){return(data)}
+  if(weather2::sys.ck.list_numericable(list = data0, list_name = "value")){return(data)}
 
   #Get text name ####
   name_based = colnames(dplyr::select(data, {{based}}))

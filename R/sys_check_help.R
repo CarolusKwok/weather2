@@ -1,0 +1,24 @@
+#' System tool: check if a parameter in the function has an argument
+#'
+#' Note: Does not work with a default value
+#'
+#'
+#' @param value value
+#' @param value_name value_name
+#'
+#' @noRd
+#'
+#' @examples sys.ck.help_hasArg(1, "obj")
+sys.ck.help_hasArg = function(value, value_name){
+  if(!hasArg(value_name)){
+    cli::cli_text('Error: {.var value_name} must be supplied.')
+    cli::cli_bullets(c("x" = 'You supplied nothing!'))
+    return(T)
+  }
+  if(!hasArg(value)){
+    cli::cli_text('Error: {.var {value_name}} must be supplied.')
+    cli::cli_bullets(c("x" = 'You supplied nothing!'))
+    return(T)
+  }
+  return(F)
+}

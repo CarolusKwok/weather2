@@ -12,19 +12,19 @@
 #' @examples calc_smooth_sp(data, x, y, df = 0.7*nrow(data), name_as = "")
 calc_smooth_sp = function(data, based, value, df, name_as = ""){
   #Check ####
-  if(weather2::w2_check_type_dataframe(value = data, value_name = "data")){return(data)}
+  if(weather2::sys.ck.class_data.frame(value = data, value_name = "data")){return(data)}
   if(weather2::w2_check_col_exist(data = data, data_name = "data", value = {{based}}, value_name = "based")){return(data)}
   if(weather2::w2_check_col_exist(data = data, data_name = "data", value = {{value}}, value_name = "value")){return(data)}
-  if(weather2::w2_check_type_numeric(value = df, value_name = "df")){return(data)}
+  if(weather2::sys.ck.class_numeric(value = df, value_name = "df")){return(data)}
 
   data0 = dplyr::select(data, x = {{based}})$x
-  if(weather2::w2_check_list_na(data = data0, data_name = "based", NAs = F)){return(data)}
-  if(weather2::w2_check_list_numericable(data = data0, data_name = "based")){return(data)}
-  if(weather2::w2_check_list_unique(data = data0, data_name = "based")){return(data)}
+  if(weather2::sys.ck.list_has.na(list = data0, list_name = "based")){return(data)}
+  if(weather2::sys.ck.list_numericable(list = data0, list_name = "based")){return(data)}
+  if(weather2::sys.ck.list_item.unique(list = data0, list_name = "based")){return(data)}
 
   data0 = dplyr::select(data, x = {{value}})$x
-  if(weather2::w2_check_list_na(data = data0, data_name = "value", NAs = T)){return(data)}
-  if(weather2::w2_check_list_numericable(data = data0, data_name = "value")){return(data)}
+  if(weather2::sys.ck.list_has.na(list = data0, list_name = "value")){return(data)}
+  if(weather2::sys.ck.list_numericable(list = data0, list_name = "value")){return(data)}
 
   data0 = dplyr::select(data, x = {{based}}, y = {{value}}) %>% tidyr::drop_na()
   if(weather2::w2_check_item_value(item = df, item_name = "df", expect = nrow(data0), type = "<=")){return(data)}
