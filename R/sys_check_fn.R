@@ -13,9 +13,9 @@
 #' @examples
 sys.cf_sys.load_file = function(data, title, attempt, worker, list_fail, threshold){
   if(weather2::sys.ck.class_data.frame(value = data, value_name = "data")){return(T)}
-  if(weather2::w2_check_col_exist(data = data, data_name = "data", value = DIR, value_name = "DIR")){return(T)}
-  if(weather2::w2_check_col_exist(data = data, data_name = "data", value = URL, value_name = "URL")){return(T)}
-  if(weather2::w2_check_col_exist(data = data, data_name = "data", value = Info, value_name = "Info")){return(T)}
+  if(weather2::sys.ck.data_col.exist(value = DIR, value_name = "DIR", data = data, data_name = "data")){return(T)}
+  if(weather2::sys.ck.data_col.exist(value = URL, value_name = "URL", data = data, data_name = "data")){return(T)}
+  if(weather2::sys.ck.data_col.exist(value = Info, value_name = "Info", data = data, data_name = "data")){return(T)}
   if(weather2::sys.ck.class_character(value = title, value_name = "title")){return(T)}
   if(weather2::sys.ck.class_integer(value = attempt, value_name = "attempt")){return(T)}
   if(weather2::sys.ck.class_integer(value = worker, value_name = "worker")){return(T)}
@@ -39,10 +39,10 @@ sys.cf_sys.load_file = function(data, title, attempt, worker, list_fail, thresho
 #' @examples
 sys.cf_sys.load_fileset = function(data, title, attempt, worker, list_fail, threshold){
   if(weather2::sys.ck.class_data.frame(value = data, value_name = "data")){return(T)}
-  if(weather2::w2_check_col_exist(data = data, data_name = "data", value = DIR, value_name = "DIR")){return(T)}
-  if(weather2::w2_check_col_exist(data = data, data_name = "data", value = URL, value_name = "URL")){return(T)}
-  if(weather2::w2_check_col_exist(data = data, data_name = "data", value = Info, value_name = "Info")){return(T)}
-  if(weather2::w2_check_col_exist(data = data, data_name = "data", value = Set, value_name = "Set")){return(T)}
+  if(weather2::sys.ck.data_col.exist(value = DIR, value_name = "DIR", data = data, data_name = "data")){return(T)}
+  if(weather2::sys.ck.data_col.exist(value = URL, value_name = "URL", data = data, data_name = "data")){return(T)}
+  if(weather2::sys.ck.data_col.exist(value = Info, value_name = "Info", data = data, data_name = "data")){return(T)}
+  if(weather2::sys.ck.data_col.exist(value = Set, value_name = "Set", data = data, data_name = "data")){return(T)}
   if(weather2::sys.ck.class_character(value = title, value_name = "title")){return(T)}
   if(weather2::sys.ck.class_integer(value = attempt, value_name = "attempt")){return(T)}
   if(weather2::sys.ck.class_integer(value = worker, value_name = "worker")){return(T)}

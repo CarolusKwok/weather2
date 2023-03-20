@@ -15,8 +15,8 @@
 calc_smooth_ma = function(data, based, value, type = "center", weight = 3, name_as = "", NAs = T){
   #Check ####
   if(weather2::sys.ck.class_data.frame(value = data, value_name = "data")){return(data)}
-  if(weather2::w2_check_col_exist(data = data, data_name = "data", value = {{based}}, value_name = "based")){return(data)}
-  if(weather2::w2_check_col_exist(data = data, data_name = "data", value = {{value}}, value_name = "value")){return(data)}
+  if(weather2::sys.ck.data_col.exist(value = {{based}}, value_name = "based", data = data, data_name = "data")){return(data)}
+  if(weather2::sys.ck.data_col.exist(value = {{value}}, value_name = "value", data = data, data_name = "data")){return(data)}
   if(weather2::sys.ck.class_character(value = type, value_name = "type")){return(data)}
   if(weather2::sys.ck.list_item.in(list = type, list_name = "type", expected = c("center", "top", "bottom"))){return(data)}
   if(weather2::sys.ck.class_numeric(value = weight, value_name = "weight")){return(data)}
@@ -34,12 +34,12 @@ calc_smooth_ma = function(data, based, value, type = "center", weight = 3, name_
   if(length(weight) == 1){
     weight = as.integer(weight)
     if(weather2::sys.ck.class_integer(value = weight, value_name = "weight")){return(data)}
-    if(weather2::w2_check_item_value(item = weight, item_name = "weight", expect = rows, type = "<=")){return(data)}
+    if(weather2::sys.ck.list_numeric.value(list = weight, list_name = "weight", expected = rows, mode = "<=")){return(data)}
   } else if(length(weight) > 1){
     len = length(weight)
     sum = sum(weight, na.rm = T)
-    if(weather2::w2_check_item_value(item = len, item_name = "weight", expect = rows, type = "<=")){return(data)}
-    if(weather2::w2_check_item_value(item = sum, item_name = "sum of weight", expect = 1, type = "=")){return(data)}
+    if(weather2::sys.ck.list_numeric.value(list = len, list_name = "weight", expected = rows, mode = "<=")){return(data)}
+    if(weather2::sys.ck.list_numeric.value(list = sum, list_name = "sum of weight", expected = 1, mode = "==")){return(data)}
   }
 
   #arrange the data by based, grab based as x and value as y, mutate to have a list of na ####
@@ -107,7 +107,7 @@ calc_smooth_ma = function(data, based, value, type = "center", weight = 3, name_
   data0 = dplyr::arrange(data0, x)
   #return the data ####
   if(name_as == ""){name_as = paste0("predict_", colnames(dplyr::select(data, {{value}})))}
-  expected_colname = weather2::w2_get_colname(data, name = name_as)
+  expected_colname = weather2::sys.tl.data_get.colname(value = name_as, data = data)
   data = dplyr::mutate(data, "{expected_colname}" := data0$predict)
   return(data)
 }

@@ -13,8 +13,8 @@
 calc_smooth_sp = function(data, based, value, df, name_as = ""){
   #Check ####
   if(weather2::sys.ck.class_data.frame(value = data, value_name = "data")){return(data)}
-  if(weather2::w2_check_col_exist(data = data, data_name = "data", value = {{based}}, value_name = "based")){return(data)}
-  if(weather2::w2_check_col_exist(data = data, data_name = "data", value = {{value}}, value_name = "value")){return(data)}
+  if(weather2::sys.ck.data_col.exist(value = {{based}}, value_name = "based", data = data, data_name = "data")){return(data)}
+  if(weather2::sys.ck.data_col.exist(value = {{value}}, value_name = "value", data = data, data_name = "data")){return(data)}
   if(weather2::sys.ck.class_numeric(value = df, value_name = "df")){return(data)}
 
   data0 = dplyr::select(data, x = {{based}})$x
@@ -27,8 +27,8 @@ calc_smooth_sp = function(data, based, value, df, name_as = ""){
   if(weather2::sys.ck.list_numericable(list = data0, list_name = "value")){return(data)}
 
   data0 = dplyr::select(data, x = {{based}}, y = {{value}}) %>% tidyr::drop_na()
-  if(weather2::w2_check_item_value(item = df, item_name = "df", expect = nrow(data0), type = "<=")){return(data)}
-  if(weather2::w2_check_item_value(item = df, item_name = "df", expect = 1, type = ">")){return(data)}
+  if(weather2::sys.ck.list_numeric.value(list = df, list_name = "df", expected = nrow(data0), mode = "<=")){return(data)}
+  if(weather2::sys.ck.list_numeric.value(list = df, list_name = "df", expected = 1, mode = ">")){return(data)}
 
   #Format the data and duplicate to data0 and data1 ####
   data = dplyr::arrange(data, {{based}})
@@ -47,7 +47,7 @@ calc_smooth_sp = function(data, based, value, df, name_as = ""){
 
   #Return data0 to data ####
   if(name_as == ""){name_as = paste0("predict_", colnames(dplyr::select(data, {{value}})))}
-  expected_colname = weather2::w2_get_colname(data, name = name_as)
+  expected_colname = weather2::sys.tl.data_get.colname(value = name_as, data = data)
   data = dplyr::mutate(data, "{expected_colname}" := data0$predict)
   return(data)
 }

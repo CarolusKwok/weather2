@@ -1,13 +1,46 @@
-# sys.ck.data_col.exist = function(value, data, data_name){
-#
-# }
-#
-#
-#
-# func = function(x){
-#   expr = rlang::quo_squash(x)
-#   print(expr)
-# }
-#
-# func(x = hi)
-# #https://stackoverflow.com/questions/58860372/convert-list-of-symbols-to-character-string-in-own-function
+#' System tool: Check if a colname is present/ absent in a dataframe
+#'
+#' @param value The value. Accpets `symbols` and `character`. Only accepts 1.
+#' @param value_name The name of value
+#' @param data The dataframe
+#' @param data_name The name of dataframe
+#' @param mode Mode of comparison. Default as `present`
+#' * "present" (`value` should be a column within `data`)
+#' * "absent" (`value` should __not__ be a column within `data`)
+#' @param silent Should a text message be shown if incorrect? Default as `False`.
+#'
+#' @return
+#' @export
+#'
+#' @examples sys.ck.data_col.exist(value = y, value_name = "x", data = tibble::tibble(y = 0), data_name = "hi", mode = "absent") #Returns `TRUE`
+sys.ck.data_col.exist = function(value, value_name, data, data_name, mode = "present", silent = F){
+  #Check ####
+  if(weather2:::sys.help_hasArg(value_name, value_name = "value_name")){return(T)}
+  if(weather2:::sys.help_hasArg(data_name, value_name = "data_name")){return(T)}
+  if(weather2:::sys.help_hasArg(value, value_name = {{value_name}})){return(T)}
+  if(weather2:::sys.help_hasArg(data, value_name = {{data_name}})){return(T)}
+  if(weather2::sys.ck.list_length(list = mode, list_name = "present", expected = 1L)){return(T)}
+  if(weather2::sys.ck.list_item.in(list = mode, list_name = "mode", expected = c("present", "absent"))){return(T)}
+  if(weather2::sys.ck.class_logical(value = silent, value_name = "silent")){return(T)}
+
+  #Work ####
+  value = weather2:::sys.help_sym2chr({{value}})
+  colnames = colnames(data)
+  if(mode == "present" & !(value %in% colnames)){
+    if(!silent){
+      cli::cli_text('Error: column {.var {value_name}} must be present in dataframe {.var {data_name}}')
+      cli::cli_bullets(c("x" = 'You supplied {.var {value}}.',
+                         "x" = 'Your column is not found in {.var {data_name}}!'))
+    }
+    return(T)
+  }
+  if(mode == "absent" & (value %in% colnames)){
+    if(!silent){
+      cli::cli_text('Error: column {.var {value_name}} must not be present in dataframe {.var {data_name}}')
+      cli::cli_bullets(c("x" = 'You supplied {.var {value}}.',
+                         "x" = 'Your column is found in {.var {data_name}}!'))
+    }
+    return(T)
+  }
+  return(F)
+}

@@ -17,10 +17,10 @@
 #'
 #' @examples sys.ck.list_length(c(1,2,3), "obj", 2L) #Return `TRUE`
 sys.ck.list_length = function(list, list_name, expected, mode = "==", silent = F){
-  #check ####
-  if(weather2:::sys.ck.help_hasArg(list_name, "list_name")){return(T)}
-  if(weather2:::sys.ck.help_hasArg(list, {{list_name}})){return(T)}
-  if(weather2:::sys.ck.help_hasArg(expected, "expected")){return(T)}
+  #Check ####
+  if(weather2:::sys.help_hasArg(list_name, "list_name")){return(T)}
+  if(weather2:::sys.help_hasArg(list, {{list_name}})){return(T)}
+  if(weather2:::sys.help_hasArg(expected, "expected")){return(T)}
   if(weather2::sys.ck.class_integer(value = expected, value_name = "expected")){return(T)}
   if(length(expected) != 1){
     cli::cli_text('Error: {.var expected} must be 1 value only.')
@@ -38,7 +38,7 @@ sys.ck.list_length = function(list, list_name, expected, mode = "==", silent = F
     return(T)
   }
   if(weather2::sys.ck.class_logical(silent, "silent")){return(T)}
-  #actually checking ####
+  #Work ####
   length_list = length(list)
   if(mode == "==" & !(length_list == expected)){
     if(!silent){
@@ -101,9 +101,9 @@ sys.ck.list_length = function(list, list_name, expected, mode = "==", silent = F
 #' @examples sys.ck.list_item.in(c(1, 2, 3, 4), "obj", c("1", "2", "3"), mode = "out") #Returns `TRUE`
 sys.ck.list_item.in = function(list, list_name, expected, mode = "in", silent = F){
   #Check ####
-  if(weather2:::sys.ck.help_hasArg(list_name, "list_name")){return(T)}
-  if(weather2:::sys.ck.help_hasArg(list, {{list_name}})){return(T)}
-  if(weather2:::sys.ck.help_hasArg(expected, "expected")){return(T)}
+  if(weather2:::sys.help_hasArg(list_name, "list_name")){return(T)}
+  if(weather2:::sys.help_hasArg(list, {{list_name}})){return(T)}
+  if(weather2:::sys.help_hasArg(expected, "expected")){return(T)}
   if(weather2::sys.ck.list_length(mode, "mode", expected = 1L)){return(T)}
   if(!(mode %in% c("in", "out"))){
     cli::cli_text('Error: {.var mode} must be {.var in} or {.var out}.')
@@ -112,7 +112,7 @@ sys.ck.list_item.in = function(list, list_name, expected, mode = "in", silent = 
   }
   if(weather2::sys.ck.class_logical(value = silent, value_name = "silent")){return(T)}
 
-  #START WORKING
+  #Work ####
   list_in = list %in% expected
   if((mode == "in") & (sum(list_in) != length(list_in))){
     if(!silent){
@@ -143,10 +143,10 @@ sys.ck.list_item.in = function(list, list_name, expected, mode = "in", silent = 
 #' @examples sys.ck.list_numericable(list = c(1, 1, "a"), list_name = "obj") #Returns `TRUE`
 sys.ck.list_numericable = function(list, list_name, silent = F){
   #Check ####
-  if(weather2:::sys.ck.help_hasArg(list_name, "list_name")){return(T)}
-  if(weather2:::sys.ck.help_hasArg(list, {{list_name}})){return(T)}
+  if(weather2:::sys.help_hasArg(list_name, "list_name")){return(T)}
+  if(weather2:::sys.help_hasArg(list, {{list_name}})){return(T)}
   if(weather2::sys.ck.class_logical(silent, "silent")){return(T)}
-  #Actually Working ####
+  #Work ####
   list = list[!is.na(list)]
   list = suppressWarnings(as.numeric(list))
   if(anyNA(list)){
@@ -174,13 +174,13 @@ sys.ck.list_numericable = function(list, list_name, silent = F){
 #' @examples sys.ck.list_has.na(c(1, 2, 3), list_name = "obj") #Returns `TRUE`
 sys.ck.list_has.na = function(list, list_name, mode = "exclude", silent = F){
   #Check ####
-  if(weather2:::sys.ck.help_hasArg(list_name, "list_name")){return(T)}
-  if(weather2:::sys.ck.help_hasArg(list, {{list_name}})){return(T)}
+  if(weather2:::sys.help_hasArg(list_name, "list_name")){return(T)}
+  if(weather2:::sys.help_hasArg(list, {{list_name}})){return(T)}
   if(weather2::sys.ck.list_length(mode, "mode", 1L)){return(T)}
   if(weather2::sys.ck.list_item.in(mode, "mode", expected = c("include", "exclude"))){return(T)}
   if(weather2::sys.ck.class_logical(silent, "silent")){return(T)}
 
-  #Actually Working ####
+  #Work####
   any_na = anyNA(list)
   if(mode == "exclude" & any_na){
     if(!silent){
@@ -214,8 +214,8 @@ sys.ck.list_has.na = function(list, list_name, mode = "exclude", silent = F){
 #' @examples sys.ck.list_item.unique(list = c(1,2,3), "obj", mode = "common") #Returns `TRUE`
 sys.ck.list_item.unique = function(list, list_name, mode = "all unique", silent = F){
   #Check ####
-  if(weather2:::sys.ck.help_hasArg(list_name, "list_name")){return(T)}
-  if(weather2:::sys.ck.help_hasArg(list, {{list_name}})){return(T)}
+  if(weather2:::sys.help_hasArg(list_name, "list_name")){return(T)}
+  if(weather2:::sys.help_hasArg(list, {{list_name}})){return(T)}
   if(weather2::sys.ck.list_length(mode, "mode", 1L)){return(T)}
   if(weather2::sys.ck.list_item.in(mode, "mode", expected = c("all unique", "common"))){return(T)}
   if(weather2::sys.ck.class_logical(silent, "silent")){return(T)}
@@ -235,6 +235,100 @@ sys.ck.list_item.unique = function(list, list_name, mode = "all unique", silent 
       cli::cli_bullets(c("x" = 'You supplied {.var {list_name}} with all unique items!'))
     }
     return(T)
+  }
+  return(F)
+}
+
+#' System tool: Check if items in a numeric/integer list are of an expected value
+#'
+#' @param list The list
+#' @param list_name Name of `list`
+#' @param expected Expected value in the list
+#' @param mode Mode of comparison. Default as `==`
+#' * "==" (values equal to the expected value)
+#' * "!=" (values not equal to expected value)
+#' * ">" (values larger than expected value)
+#' * "<" (values smaller than expected value)
+#' * ">=" (values larger or equal to expected value)
+#' * "<=" (values smaller or equal to expected value)
+#' @param silent Should a text message be shown if incorrect? Default as `False`.
+#'
+#' @return
+#' @export
+#'
+#' @examples
+sys.ck.list_numeric.value = function(list, list_name, expected, mode = "==", silent = F){
+  #Check ####
+  if(weather2:::sys.help_hasArg(value = list_name, value_name = "list_name")){return(T)}
+  if(weather2:::sys.help_hasArg(value = list, value_name = {{list_name}})){return(T)}
+  if(weather2:::sys.help_hasArg(value = expected, value_name = "expected")){return(T)}
+
+  if(weather2::sys.ck.list_numericable(list, list_name = "list")){return(T)}
+  if(weather2::sys.ck.class_num.int(value = expected, value_name = "expected")){return(T)}
+  if(weather2::sys.ck.list_length(list = expected, list_name = "expected", expected = 1L)){return(T)}
+  if(weather2::sys.ck.list_item.in(mode, list_name = "mode", expected = c("==", "!=", ">", "<", ">=", "<="))){return(T)}
+  if(weather2::sys.ck.class_logical(value = silent, value_name = "silent")){return(T)}
+
+  #Work ####
+  if(mode == "=="){
+    list_com = (list == expected)
+    if(sum(list_com) != length(list_com)){
+      if(!silent){
+        cli::cli_text('Error: items of {.var {list_name}} must be equal to {expected}.')
+        cli::cli_bullets(c("x" = 'You supplied {list}!'))
+      }
+      return(T)
+    }
+  }
+  if(mode == "!="){
+    list_com = (list != expected)
+    if(sum(list_com) != length(list_com)){
+      if(!silent){
+        cli::cli_text('Error: items of {.var {list_name}} must be not equal to {expected}.')
+        cli::cli_bullets(c("x" = 'You supplied {list}!'))
+      }
+      return(T)
+    }
+  }
+  if(mode == ">"){
+    list_com = (list > expected)
+    if(sum(list_com) != length(list_com)){
+      if(!silent){
+        cli::cli_text('Error: items of {.var {list_name}} must be larger than {expected}.')
+        cli::cli_bullets(c("x" = 'You supplied {list}!'))
+      }
+      return(T)
+    }
+  }
+  if(mode == "<"){
+    list_com = (list < expected)
+    if(sum(list_com) != length(list_com)){
+      if(!silent){
+        cli::cli_text('Error: items of {.var {list_name}} must be smaller than {expected}.')
+        cli::cli_bullets(c("x" = 'You supplied {list}!'))
+      }
+      return(T)
+    }
+  }
+  if(mode == ">="){
+    list_com = (list >= expected)
+    if(sum(list_com) != length(list_com)){
+      if(!silent){
+        cli::cli_text('Error: items of {.var {list_name}} must be larger or equal to {expected}.')
+        cli::cli_bullets(c("x" = 'You supplied {list}!'))
+      }
+      return(T)
+    }
+  }
+  if(mode == "<="){
+    list_com = (list <= expected)
+    if(sum(list_com) != length(list_com)){
+      if(!silent){
+        cli::cli_text('Error: items of {.var {list_name}} must be smaller or equal to {expected}.')
+        cli::cli_bullets(c("x" = 'You supplied {list}!'))
+      }
+      return(T)
+    }
   }
   return(F)
 }

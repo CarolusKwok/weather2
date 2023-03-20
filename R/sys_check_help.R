@@ -8,8 +8,8 @@
 #'
 #' @noRd
 #'
-#' @examples sys.ck.help_hasArg(1, "obj")
-sys.ck.help_hasArg = function(value, value_name){
+#' @examples sys.help_hasArg(1, "obj")
+sys.help_hasArg = function(value, value_name){
   if(!hasArg(value_name)){
     cli::cli_text('Error: {.var value_name} must be supplied.')
     cli::cli_bullets(c("x" = 'You supplied nothing!'))
@@ -22,3 +22,13 @@ sys.ck.help_hasArg = function(value, value_name){
   }
   return(F)
 }
+
+#' System tool: Returns a string value from symbols
+#'
+#' @param value value
+#' @param value_name value_name
+#'
+#' @noRd
+#'
+#' @examples sys.help_sym2chr(hiiiii)
+sys.help_sym2chr = function(x){return(rlang::as_name(rlang::quo({{x}})))}

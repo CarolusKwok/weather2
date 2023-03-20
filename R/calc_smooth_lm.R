@@ -13,8 +13,8 @@
 calc_smooth_lm = function(data, based, value, trailing = T, name_as = ""){
   #Check ####
   if(weather2::sys.ck.class_data.frame(value = data, value_name = "data")){return(data)}
-  if(weather2::w2_check_col_exist(data = data, data_name = "data", value = {{based}}, value_name = "based")){return(data)}
-  if(weather2::w2_check_col_exist(data = data, data_name = "data", value = {{value}}, value_name = "value")){return(data)}
+  if(weather2::sys.ck.data_col.exist(value = {{based}}, value_name = "based", data = data, data_name = "data")){return(data)}
+  if(weather2::sys.ck.data_col.exist(value = {{value}}, value_name = "value", data = data, data_name = "data")){return(data)}
   if(weather2::sys.ck.class_logical(value = trailing, value_name = "trailing")){return(data)}
   if(weather2::sys.ck.class_character(value = name_as, value_name = "name_as")){return(data)}
 
@@ -89,7 +89,7 @@ calc_smooth_lm = function(data, based, value, trailing = T, name_as = ""){
   if(name_as == ""){
     name_as = paste0("predict_", name_value)
   }
-  expected_colname = weather2::w2_get_colname(data, name_as)
+  expected_colname = weather2::sys.tl.data_get.colname(value = name_as, data = data)
   data = dplyr::mutate(data, "{expected_colname}" := data0$predict)
 
   return(data)

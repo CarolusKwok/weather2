@@ -12,9 +12,9 @@
 #' @examples sys.ck.class(1, "name", "numeric")
 sys.ck.class = function(value, value_name, class, all = T, silent = F){
   #Checks ####
-  if(weather2:::sys.ck.help_hasArg(value = value_name, value_name = "value_name")){return(T)}
-  if(weather2:::sys.ck.help_hasArg(value = value, value_name = {{value_name}})){return(T)}
-  if(weather2:::sys.ck.help_hasArg(value = class, value_name = "class")){return(T)}
+  if(weather2:::sys.help_hasArg(value = value_name, value_name = "value_name")){return(T)}
+  if(weather2:::sys.help_hasArg(value = value, value_name = {{value_name}})){return(T)}
+  if(weather2:::sys.help_hasArg(value = class, value_name = "class")){return(T)}
   if(!is.character(class)){
     cli::cli_text('Error: {.var class} must be a {.var character}')
     cli::cli_bullets(c("x" = 'You supplied {.var {class(class)}}!'))
@@ -52,6 +52,29 @@ sys.ck.class = function(value, value_name, class, all = T, silent = F){
   }
   return(F)
 }
+
+#' System tool: Checks an object is a numeric or an integer
+#'
+#' A wrapper around `sys.ck.class`
+#'
+#' @param value Value of the object
+#' @param value_name Name of the object, in character
+#' @param class Expected class of an object, in character and can be a vector.
+#' @param all Should all the values be tested in a list/ vector? Default as True
+#' @param silent Should a text message be shown if the class of an object is incorrect? Default as False.
+#'
+#' @return
+#' @export
+#'
+#' @examples sys.ck.class_num.int(list(10, 20, 30L, 40L), "obj") #Return `FALSE`
+sys.ck.class_num.int = function(value, value_name, all = T, silent = F){
+  weather2::sys.ck.class(value = value,
+                         value_name = value_name,
+                         class = c("numeric", "integer"),
+                         all = all,
+                         silent = silent)
+}
+
 
 #' System tool: Checks an object is a character
 #'
@@ -188,3 +211,5 @@ sys.ck.class_POSIXct = function(value, value_name, all = T, silent = F){
                          all = all,
                          silent = silent)
 }
+
+
