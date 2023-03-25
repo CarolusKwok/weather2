@@ -11,14 +11,14 @@
 #' @return
 #' @export
 #'
-#' @examples sys.load_fileset(data, title = "Macao tidal data", attempt = 10, worker = 20, list_fail = T, threshold = 0.5)
-sys.load_fileset = function(data, title = "test", attempt = 5, worker = 0, list_fail = T, threshold = 0.5, check = T){
+#' @examples sys_load_fileset(data, title = "Macao tidal data", attempt = 10, worker = 20, list_fail = T, threshold = 0.5)
+sys_load_fileset = function(data, title = "test", attempt = 5, worker = 0, list_fail = T, threshold = 0.5, check = T){
   #Format download process information and CHECK ####
   worker = suppressWarnings(as.integer(worker))
   attempt = suppressWarnings(as.integer(attempt))
-  if(weather2::sys.ck.class_logical(check, "check")){return(invisible())}
+  if(weather2::sys_ckc_logical(check, "check")){return(invisible())}
   if(check != F){
-    if(weather2::sys.cf_sys.load_fileset(data = data,
+    if(weather2::sys_ckf_SysLoadFileset(data = data,
                                          title = title,
                                          attempt = attempt,
                                          worker = worker,
@@ -30,13 +30,13 @@ sys.load_fileset = function(data, title = "test", attempt = 5, worker = 0, list_
   if(worker <= 0){
     return(data)
   } else if(worker == 1){
-    weather2:::sys.load_fileset.seq(data = data,
+    weather2:::sys_load_filesetSEQ(data = data,
                                     title = title,
                                     attempt = attempt,
                                     threshold = threshold,
                                     list_fail = list_fail)
   } else {
-    weather2:::sys.load_fileset.stm(data = data,
+    weather2:::sys_load_filesetSTM(data = data,
                                     title = title,
                                     attempt = attempt,
                                     worker = worker,
@@ -49,7 +49,7 @@ sys.load_fileset = function(data, title = "test", attempt = 5, worker = 0, list_
 #' System tools: Download files from website
 #'
 #' Warning: This is not a "checked" function. Your input, if incorrect, may damage your system.
-#' Please use the sys.load_fileset() function instead.
+#' Please use the sys_load_fileset() function instead.
 #'
 #' @param data Data frame containing columns "URL", "DIR", "Info", "Set"
 #' @param title Title of the downloaded data
@@ -59,9 +59,9 @@ sys.load_fileset = function(data, title = "test", attempt = 5, worker = 0, list_
 #'
 #' @keywords internal
 #'
-#' @examples sys.load_fileset.seq(data, title = "Macao tidal data")
-sys.load_fileset.seq = function(data, title = "test_set_seq", attempt = 5, threshold = 0.5, list_fail = T){
-  if(!weather2::sys.ck.internet()){return(invisible())}
+#' @examples sys_load_filesetSEQ(data, title = "Macao tidal data")
+sys_load_filesetSEQ = function(data, title = "test_set_seq", attempt = 5, threshold = 0.5, list_fail = T){
+  if(!weather2::sys_ck_internet()){return(invisible())}
   #Pre-set function ####
   format_sets = function(data){
     sets = unique(data$Set)
@@ -74,7 +74,7 @@ sys.load_fileset.seq = function(data, title = "test_set_seq", attempt = 5, thres
   }
 
   #Format the data ####
-  data = weather2:::sys.load.formatdata(data) %>%
+  data = weather2:::sys_load_formatdata(data) %>%
     dplyr::filter(exist == F) %>%
     dplyr::distinct()
   sets = format_sets(data = data)
@@ -128,7 +128,7 @@ sys.load_fileset.seq = function(data, title = "test_set_seq", attempt = 5, thres
           attp_sum = attp_sum + attp
         }
       }
-      data = weather2:::sys.load.formatdata(data)
+      data = weather2:::sys_load_formatdata(data)
       max_size = max(data$size, na.rm = T)
       sets = dplyr::filter(data, size <= (max_size * threshold)) %>% format_sets()
       info = dplyr::filter(data, size <= (max_size * threshold)) %>% format_info()
@@ -136,7 +136,7 @@ sys.load_fileset.seq = function(data, title = "test_set_seq", attempt = 5, thres
   }
   options(warn = defaultW)
   #Return download process information ####
-  data = weather2:::sys.load.formatdata(data)
+  data = weather2:::sys_load_formatdata(data)
   success = dplyr::select(data, DIR, Info, exist) %>%
     dplyr::distinct() %>%
     dplyr::filter(exist == T)
@@ -154,7 +154,7 @@ sys.load_fileset.seq = function(data, title = "test_set_seq", attempt = 5, thres
   cli::cli_alert_info("   Attempt: {attp_sum}")
   cli::cli_alert_info("   Success: {nrow(success)}")
   cli::cli_alert_info("      Fail: {nrow(fail)}")
-  if(list_fail){weather2:::sys.load.listfail(fail$Info)}
+  if(list_fail){weather2:::sys_load_listfail(fail$Info)}
   cli::cli_text("")
 }
 
@@ -163,7 +163,7 @@ sys.load_fileset.seq = function(data, title = "test_set_seq", attempt = 5, thres
 #' System tools: Download files from website using STORM mode
 #'
 #' Warning: This is not a "checked" function. Your input, if incorrect, may damage your system.
-#' Please use the sys.load_fileset() function instead.
+#' Please use the sys_load_fileset() function instead.
 #'
 #' @param data Data frame containing columns "URL", "DIR", "Info", "Set"
 #' @param title Title of the downloaded data
@@ -174,9 +174,9 @@ sys.load_fileset.seq = function(data, title = "test_set_seq", attempt = 5, thres
 #'
 #' @keywords internal
 #'
-#' @examples sys.load_fileset.stm(data, title = "Macao tidal data", attempt = 3, worker = 10, threshold = 0, list_fail = T)
-sys.load_fileset.stm = function(data, title = "test_set_stm", attempt = 5, worker = 20, threshold = 0.5, list_fail = T){
-  if(!weather2::sys.ck.internet()){return(invisible())}
+#' @examples sys_load_filesetSTM(data, title = "Macao tidal data", attempt = 3, worker = 10, threshold = 0, list_fail = T)
+sys_load_filesetSTM = function(data, title = "test_set_stm", attempt = 5, worker = 20, threshold = 0.5, list_fail = T){
+  if(!weather2::sys_ck_internet()){return(invisible())}
   #Preset functions ####
   download_list = function(.x, .y){
     data_t = dplyr::filter(.x, Set == .y)
@@ -203,7 +203,7 @@ sys.load_fileset.stm = function(data, title = "test_set_stm", attempt = 5, worke
   }
 
   #Format the data ####
-  data = dplyr::filter(weather2:::sys.load.formatdata(data), exist == F)
+  data = dplyr::filter(weather2:::sys_load_formatdata(data), exist == F)
   data_f = data
   sets = set_filter(data = data_f)
 
@@ -249,7 +249,7 @@ sys.load_fileset.stm = function(data, title = "test_set_stm", attempt = 5, worke
       if(nrow(data_f) != 0){
         attp_temp = furrr::future_map(.x = list, .f = download_template)
         attp_sum  = attp_sum + sum(unlist(attp_temp))
-        data = weather2:::sys.load.formatdata(data)
+        data = weather2:::sys_load_formatdata(data)
         max_size = max(data$size, na.rm = T)
         data_f = dplyr::filter(data, size <= (max_size * threshold))
         sets = set_filter(data = data_f)
@@ -260,7 +260,7 @@ sys.load_fileset.stm = function(data, title = "test_set_stm", attempt = 5, worke
   future::plan("future::sequential")
   options(warn = defaultW)
   #Return download process information ####
-  data = weather2:::sys.load.formatdata(data)
+  data = weather2:::sys_load_formatdata(data)
   success = dplyr::select(data, DIR, Info, exist) %>%
     dplyr::distinct() %>%
     dplyr::filter(exist == T)
@@ -278,7 +278,7 @@ sys.load_fileset.stm = function(data, title = "test_set_stm", attempt = 5, worke
   cli::cli_alert_info(" Attempt: {attp_sum}")
   cli::cli_alert_info(" Success: {nrow(success)}")
   cli::cli_alert_info("    Fail: {nrow(fail)}")
-  if(list_fail){weather2:::sys.load.listfail(fail$Info)}
+  if(list_fail){weather2:::sys_load_listfail(fail$Info)}
   cli::cli_text("")
 }
 

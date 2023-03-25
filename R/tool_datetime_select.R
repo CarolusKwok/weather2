@@ -10,7 +10,7 @@
 #' @examples tool_datetime_select(time, "min", 0)
 tool_datetime_select = function(time, by, value){
   #Check
-  if(weather2::sys.ck.class_POSIXct(time, "time")){return(invisible())}
+  if(weather2::sys_ckc_POSIXct(time, "time")){return(invisible())}
 
   #Start
   data = tibble::as_tibble(time) %>% dplyr::rename(time = value)

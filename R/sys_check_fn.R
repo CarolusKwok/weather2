@@ -1,4 +1,4 @@
-#' System tool: Check if the input satisfy the sys.load_file requirements
+#' System tool: Check if the input satisfy the sys_load_file requirements
 #'
 #' @param data Data frame containing columns "URL", "DIR", "Info"
 #' @param title Title of the downloaded data
@@ -11,20 +11,20 @@
 #' @export
 #'
 #' @examples
-sys.cf_sys.load_file = function(data, title, attempt, worker, list_fail, threshold){
-  if(weather2::sys.ck.class_data.frame(value = data, value_name = "data")){return(T)}
-  if(weather2::sys.ck.data_col.exist(value = DIR, value_name = "DIR", data = data, data_name = "data")){return(T)}
-  if(weather2::sys.ck.data_col.exist(value = URL, value_name = "URL", data = data, data_name = "data")){return(T)}
-  if(weather2::sys.ck.data_col.exist(value = Info, value_name = "Info", data = data, data_name = "data")){return(T)}
-  if(weather2::sys.ck.class_character(value = title, value_name = "title")){return(T)}
-  if(weather2::sys.ck.class_integer(value = attempt, value_name = "attempt")){return(T)}
-  if(weather2::sys.ck.class_integer(value = worker, value_name = "worker")){return(T)}
-  if(weather2::sys.ck.class_logical(value = list_fail, value_name = "list_fail")){return(T)}
-  if(weather2::sys.ck.class_numeric(value = threshold, value_name = "threshold")){return(T)}
+sys_ckf_SysLoadFile = function(data, title, attempt, worker, list_fail, threshold){
+  if(weather2::sys_ckc_dataframe(value = data, value_name = "data")){return(T)}
+  if(weather2::sys_ckd_colexist(value = DIR, value_name = "DIR", data = data, data_name = "data")){return(T)}
+  if(weather2::sys_ckd_colexist(value = URL, value_name = "URL", data = data, data_name = "data")){return(T)}
+  if(weather2::sys_ckd_colexist(value = Info, value_name = "Info", data = data, data_name = "data")){return(T)}
+  if(weather2::sys_ckc_character(value = title, value_name = "title")){return(T)}
+  if(weather2::sys_ckc_integer(value = attempt, value_name = "attempt")){return(T)}
+  if(weather2::sys_ckc_integer(value = worker, value_name = "worker")){return(T)}
+  if(weather2::sys_ckc_logical(value = list_fail, value_name = "list_fail")){return(T)}
+  if(weather2::sys_ckc_numeric(value = threshold, value_name = "threshold")){return(T)}
   return(F)
 }
 
-#' System tool: Check if the input satisfy the sys.load_fileset requirements
+#' System tool: Check if the input satisfy the sys_load_fileset requirements
 #'
 #' @param data Data frame containing columns "URL", "DIR", "Info", "Set"
 #' @param title Title of the downloaded data
@@ -37,16 +37,16 @@ sys.cf_sys.load_file = function(data, title, attempt, worker, list_fail, thresho
 #' @export
 #'
 #' @examples
-sys.cf_sys.load_fileset = function(data, title, attempt, worker, list_fail, threshold){
-  if(weather2::sys.ck.class_data.frame(value = data, value_name = "data")){return(T)}
-  if(weather2::sys.ck.data_col.exist(value = DIR, value_name = "DIR", data = data, data_name = "data")){return(T)}
-  if(weather2::sys.ck.data_col.exist(value = URL, value_name = "URL", data = data, data_name = "data")){return(T)}
-  if(weather2::sys.ck.data_col.exist(value = Info, value_name = "Info", data = data, data_name = "data")){return(T)}
-  if(weather2::sys.ck.data_col.exist(value = Set, value_name = "Set", data = data, data_name = "data")){return(T)}
-  if(weather2::sys.ck.class_character(value = title, value_name = "title")){return(T)}
-  if(weather2::sys.ck.class_integer(value = attempt, value_name = "attempt")){return(T)}
-  if(weather2::sys.ck.class_integer(value = worker, value_name = "worker")){return(T)}
-  if(weather2::sys.ck.class_logical(value = list_fail, value_name = "list_fail")){return(T)}
-  if(weather2::sys.ck.class_numeric(value = threshold, value_name = "threshold")){return(T)}
+sys_ckf_SysLoadFileset = function(data, title, attempt, worker, list_fail, threshold){
+  if(weather2::sys_ckc_dataframe(value = data, value_name = "data")){return(T)}
+  if(weather2::sys_ckd_colexist(value = DIR, value_name = "DIR", data = data, data_name = "data")){return(T)}
+  if(weather2::sys_ckd_colexist(value = URL, value_name = "URL", data = data, data_name = "data")){return(T)}
+  if(weather2::sys_ckd_colexist(value = Info, value_name = "Info", data = data, data_name = "data")){return(T)}
+  if(weather2::sys_ckd_colexist(value = Set, value_name = "Set", data = data, data_name = "data")){return(T)}
+  if(weather2::sys_ckc_character(value = title, value_name = "title")){return(T)}
+  if(weather2::sys_ckc_integer(value = attempt, value_name = "attempt")){return(T)}
+  if(weather2::sys_ckc_integer(value = worker, value_name = "worker")){return(T)}
+  if(weather2::sys_ckc_logical(value = list_fail, value_name = "list_fail")){return(T)}
+  if(weather2::sys_ckc_numeric(value = threshold, value_name = "threshold")){return(T)}
   return(F)
 }

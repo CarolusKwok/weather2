@@ -9,12 +9,12 @@
 #' @return
 #' @export
 #'
-#' @examples sys.ck.class(1, "name", "numeric")
-sys.ck.class = function(value, value_name, class, all = T, silent = F){
+#' @examples sys_ckc(1, "name", "numeric")
+sys_ckc = function(value, value_name, class, all = T, silent = F){
   #Checks ####
-  if(weather2:::sys.help_hasArg(value = value_name, value_name = "value_name")){return(T)}
-  if(weather2:::sys.help_hasArg(value = value, value_name = {{value_name}})){return(T)}
-  if(weather2:::sys.help_hasArg(value = class, value_name = "class")){return(T)}
+  if(weather2:::sys_hp_hasArg(value = value_name, value_name = "value_name")){return(T)}
+  if(weather2:::sys_hp_hasArg(value = value, value_name = {{value_name}})){return(T)}
+  if(weather2:::sys_hp_hasArg(value = class, value_name = "class")){return(T)}
   if(!is.character(class)){
     cli::cli_text('Error: {.var class} must be a {.var character}')
     cli::cli_bullets(c("x" = 'You supplied {.var {class(class)}}!'))
@@ -32,11 +32,15 @@ sys.ck.class = function(value, value_name, class, all = T, silent = F){
   }
   #Actually checking the values class#####
   if(all){
+    if(!("list" %in% class(value))){
+      value = list(a = value)
+    }
     class_value = lapply(X = value, FUN = inherits, class)
     if(sum(unlist(class_value)) != length(class_value)){
       if(!silent){
+        classes = lapply(X = value, FUN = base::class)
         cli::cli_text('Error: Items in {.var {value_name}} must be a {.var {class}}')
-        cli::cli_bullets(c("x" = 'You supplied the wrong thing!'))
+        cli::cli_bullets(c("x" = 'You supplied {.var {unique(classes)}}!'))
       }
       return(T)
     }
@@ -45,7 +49,7 @@ sys.ck.class = function(value, value_name, class, all = T, silent = F){
     if(!class_value){
       if(!silent){
         cli::cli_text('Error: Items in {.var {value_name}} must be a {.var {class}}')
-        cli::cli_bullets(c("x" = 'You supplied the wrong thing!'))
+        cli::cli_bullets(c("x" = 'You supplied {.var {class(value)}}'))
       }
       return(T)
     }
@@ -55,7 +59,7 @@ sys.ck.class = function(value, value_name, class, all = T, silent = F){
 
 #' System tool: Checks an object is a numeric or an integer
 #'
-#' A wrapper around `sys.ck.class`
+#' A wrapper around `sys_ckc`
 #'
 #' @param value Value of the object
 #' @param value_name Name of the object, in character
@@ -66,9 +70,9 @@ sys.ck.class = function(value, value_name, class, all = T, silent = F){
 #' @return
 #' @export
 #'
-#' @examples sys.ck.class_num.int(list(10, 20, 30L, 40L), "obj") #Return `FALSE`
-sys.ck.class_num.int = function(value, value_name, all = T, silent = F){
-  weather2::sys.ck.class(value = value,
+#' @examples sys_ckc_numint(list(10, 20, 30L, 40L), "obj") #Return `FALSE`
+sys_ckc_numint = function(value, value_name, all = T, silent = F){
+  weather2::sys_ckc(value = value,
                          value_name = value_name,
                          class = c("numeric", "integer"),
                          all = all,
@@ -78,7 +82,7 @@ sys.ck.class_num.int = function(value, value_name, all = T, silent = F){
 
 #' System tool: Checks an object is a character
 #'
-#' A wrapper around `sys.ck.class`
+#' A wrapper around `sys_ckc`
 #'
 #' @param value Value of the object
 #' @param value_name Name of the object, in character
@@ -89,9 +93,9 @@ sys.ck.class_num.int = function(value, value_name, all = T, silent = F){
 #' @return
 #' @export
 #'
-#' @examples sys.ck.class_character("text", "obj")
-sys.ck.class_character = function(value, value_name, all = T, silent = F){
-  weather2::sys.ck.class(value = value,
+#' @examples sys_ckc_character("text", "obj")
+sys_ckc_character = function(value, value_name, all = T, silent = F){
+  weather2::sys_ckc(value = value,
                          value_name = value_name,
                          class = "character",
                          all = all,
@@ -101,7 +105,7 @@ sys.ck.class_character = function(value, value_name, all = T, silent = F){
 
 #' System tool: Checks an object is a data.frame
 #'
-#' A wrapper around `sys.ck.class`
+#' A wrapper around `sys_ckc`
 #'
 #' @param value Value of the object
 #' @param value_name Name of the object, in character
@@ -112,9 +116,9 @@ sys.ck.class_character = function(value, value_name, all = T, silent = F){
 #' @return
 #' @export
 #'
-#' @examples sys.ck.class_data.frame(data.frame(), "obj")
-sys.ck.class_data.frame = function(value, value_name, all = T, silent = F){
-  weather2::sys.ck.class(value = value,
+#' @examples sys_ckc_dataframe(data.frame(), "obj")
+sys_ckc_dataframe = function(value, value_name, all = T, silent = F){
+  weather2::sys_ckc(value = value,
                          value_name = value_name,
                          class = "data.frame",
                          all = all,
@@ -124,7 +128,7 @@ sys.ck.class_data.frame = function(value, value_name, all = T, silent = F){
 
 #' System tool: Checks an object is an integer
 #'
-#' A wrapper around `sys.ck.class`
+#' A wrapper around `sys_ckc`
 #'
 #' @param value Value of the object
 #' @param value_name Name of the object, in character
@@ -135,9 +139,9 @@ sys.ck.class_data.frame = function(value, value_name, all = T, silent = F){
 #' @return
 #' @export
 #'
-#' @examples sys.ck.class_integer(1L, "obj")
-sys.ck.class_integer = function(value, value_name, all = T, silent = F){
-  weather2::sys.ck.class(value = value,
+#' @examples sys_ckc_integer(1L, "obj")
+sys_ckc_integer = function(value, value_name, all = T, silent = F){
+  weather2::sys_ckc(value = value,
                          value_name = value_name,
                          class = "integer",
                          all = all,
@@ -146,7 +150,7 @@ sys.ck.class_integer = function(value, value_name, all = T, silent = F){
 
 #' System tool: Checks an object is a logical
 #'
-#' A wrapper around `sys.ck.class`
+#' A wrapper around `sys_ckc`
 #'
 #' @param value Value of the object
 #' @param value_name Name of the object, in character
@@ -157,9 +161,9 @@ sys.ck.class_integer = function(value, value_name, all = T, silent = F){
 #' @return
 #' @export
 #'
-#' @examples sys.ck.class_logical(TRUE, "obj")
-sys.ck.class_logical = function(value, value_name, all = T, silent = F){
-  weather2::sys.ck.class(value = value,
+#' @examples sys_ckc_logical(TRUE, "obj")
+sys_ckc_logical = function(value, value_name, all = T, silent = F){
+  weather2::sys_ckc(value = value,
                          value_name = value_name,
                          class = "logical",
                          all = all,
@@ -169,7 +173,7 @@ sys.ck.class_logical = function(value, value_name, all = T, silent = F){
 
 #' System tool: Checks an object is a numeric
 #'
-#' A wrapper around `sys.ck.class`
+#' A wrapper around `sys_ckc`
 #'
 #' @param value Value of the object
 #' @param value_name Name of the object, in character
@@ -180,9 +184,9 @@ sys.ck.class_logical = function(value, value_name, all = T, silent = F){
 #' @return
 #' @export
 #'
-#' @examples sys.ck.class_numeric(1, "obj")
-sys.ck.class_numeric = function(value, value_name, all = T, silent = F){
-  weather2::sys.ck.class(value = value,
+#' @examples sys_ckc_numeric(1, "obj")
+sys_ckc_numeric = function(value, value_name, all = T, silent = F){
+  weather2::sys_ckc(value = value,
                          value_name = value_name,
                          class = "numeric",
                          all = all,
@@ -192,7 +196,7 @@ sys.ck.class_numeric = function(value, value_name, all = T, silent = F){
 
 #' System tool: Checks an object is a POSIXct
 #'
-#' A wrapper around `sys.ck.class`
+#' A wrapper around `sys_ckc`
 #'
 #' @param value Value of the object
 #' @param value_name Name of the object, in character
@@ -203,9 +207,9 @@ sys.ck.class_numeric = function(value, value_name, all = T, silent = F){
 #' @return
 #' @export
 #'
-#' @examples sys.ck.class_POSIXct(ISOdatetime(2023, 01, 01, 00, 00, 00), "obj")
-sys.ck.class_POSIXct = function(value, value_name, all = T, silent = F){
-  weather2::sys.ck.class(value = value,
+#' @examples sys_ckc_POSIXct(ISOdatetime(2023, 01, 01, 00, 00, 00), "obj")
+sys_ckc_POSIXct = function(value, value_name, all = T, silent = F){
+  weather2::sys_ckc(value = value,
                          value_name = value_name,
                          class = "POSIXct",
                          all = all,

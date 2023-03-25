@@ -11,13 +11,13 @@
 #' @return
 #' @export
 #'
-#' @examples sys.load_file(data, title = "Global nc data", attempt = 10, worker = 10, list_fail = T, threshold = 0.5)
-sys.load_file = function(data, title = "test", attempt = 5, worker = 0, list_fail = T, threshold = 0.5, check = T){
+#' @examples sys_load_file(data, title = "Global nc data", attempt = 10, worker = 10, list_fail = T, threshold = 0.5)
+sys_load_file = function(data, title = "test", attempt = 5, worker = 0, list_fail = T, threshold = 0.5, check = T){
   #Format download process information and CHECK ####
   worker = as.integer(worker)
   attempt = as.integer(attempt)
   if(check != F){
-    if(weather2::sys.cf_sys.load_file(data = data,
+    if(weather2::sys_ckf_SysLoadFile(data = data,
                                       title = title,
                                       attempt = attempt,
                                       worker = worker,
@@ -29,13 +29,13 @@ sys.load_file = function(data, title = "test", attempt = 5, worker = 0, list_fai
   if(worker <= 0){
     return(data)
   } else if(worker == 1){
-    weather2:::sys.load_file.seq(data = data,
+    weather2:::sys_load_fileSEQ(data = data,
                                  title = title,
                                  list_fail = list_fail,
                                  attempt = attempt,
                                  threshold = threshold)
   } else {
-    weather2:::sys.load_file.stm(data = data,
+    weather2:::sys_load_fileSTM(data = data,
                                  title = title,
                                  attempt = attempt,
                                  worker = worker,
@@ -47,7 +47,7 @@ sys.load_file = function(data, title = "test", attempt = 5, worker = 0, list_fai
 #' System tools: Download files from website
 #'
 #' Warning: This is not a "checked" function. Your input, if incorrect, may damage your system.
-#' Please use the sys.load_file() function instead.
+#' Please use the sys_load_file() function instead.
 #'
 #' @param data Data frame containing columns "URL", "DIR", "Info"
 #' @param title Title of the downloaded data
@@ -57,12 +57,12 @@ sys.load_file = function(data, title = "test", attempt = 5, worker = 0, list_fai
 #'
 #' @keywords internal
 #'
-#' @examples sys.load_file.seq(data, title = "Global nc data")
-sys.load_file.seq = function(data, title = "test_seq", attempt = 5, threshold = 0.5, list_fail = T){
-  if(!weather2::sys.ck.internet()){return(invisible())}
+#' @examples sys_load_fileSEQ(data, title = "Global nc data")
+sys_load_fileSEQ = function(data, title = "test_seq", attempt = 5, threshold = 0.5, list_fail = T){
+  if(!weather2::sys_ck_internet()){return(invisible())}
 
   #Format download process information ####
-  data = weather2:::sys.load.formatdata(data) %>%
+  data = weather2:::sys_load_formatdata(data) %>%
     dplyr::filter(exist == F) %>%
     dplyr::distinct()
   file_f = tryCatch(basename(data$DIR[1]), error = function(e){"NA"})
@@ -111,7 +111,7 @@ sys.load_file.seq = function(data, title = "test_seq", attempt = 5, threshold = 
         }
         attp_sum = attp_sum + read
       }
-      data = weather2:::sys.load.formatdata(data)
+      data = weather2:::sys_load_formatdata(data)
       max_size = max(c(max_size, data$size), na.rm = T)
       temp_data = dplyr::filter(data, size <= (max_size * threshold))
     }
@@ -119,7 +119,7 @@ sys.load_file.seq = function(data, title = "test_seq", attempt = 5, threshold = 
   options(warn = defaultW)
 
   #Return download process information ####
-  data = weather2:::sys.load.formatdata(data)
+  data = weather2:::sys_load_formatdata(data)
   success = dplyr::filter(data, exist == T)
   fail    = dplyr::filter(data, exist == F)
   time_end = Sys.time()
@@ -131,14 +131,14 @@ sys.load_file.seq = function(data, title = "test_seq", attempt = 5, threshold = 
   cli::cli_alert_info(" Attemps: {attp_sum}")
   cli::cli_alert_info(" Success: {nrow(success)}")
   cli::cli_alert_info("    Fail: {nrow(fail)}")
-  if(list_fail){weather2:::sys.load.listfail(fail$Info)}
+  if(list_fail){weather2:::sys_load_listfail(fail$Info)}
   cli::cli_text("")
 }
 
 #' System tools: Download files from website using STORM mode
 #'
 #' Warning: This is not a "checked" function. Your input, if incorrect, may damage your system.
-#' Please use the sys.load_file() function instead.
+#' Please use the sys_load_file() function instead.
 #'
 #' @param data Data frame containing columns "URL", "DIR", "Info"
 #' @param title Title of the downloaded data
@@ -149,9 +149,9 @@ sys.load_file.seq = function(data, title = "test_seq", attempt = 5, threshold = 
 #'
 #' @keywords internal
 #'
-#' @examples sys.load_file.stm(data, title = "Global nc data")
-sys.load_file.stm = function(data, title = "test_stm", attempt = 5, worker = 20, threshold = 0.5, list_fail = T){
-  if(!weather2::sys.ck.internet()){return(invisible())}
+#' @examples sys_load_fileSTM(data, title = "Global nc data")
+sys_load_fileSTM = function(data, title = "test_stm", attempt = 5, worker = 20, threshold = 0.5, list_fail = T){
+  if(!weather2::sys_ck_internet()){return(invisible())}
 
   #Pre-set function ####
   download_template = function(.x, .y){
@@ -160,7 +160,7 @@ sys.load_file.stm = function(data, title = "test_stm", attempt = 5, worker = 20,
   }
 
   #Format data ####
-  data = weather2:::sys.load.formatdata(data) %>%
+  data = weather2:::sys_load_formatdata(data) %>%
     dplyr::filter(exist == F) %>%
     dplyr::distinct()
   file_f = tryCatch(basename(data$DIR[1]), error = function(e){"NA"})
@@ -202,7 +202,7 @@ sys.load_file.stm = function(data, title = "test_stm", attempt = 5, worker = 20,
       attp_sum = attp_sum + nrow(temp_data)
       furrr::future_map2(.x = temp_data$URL, .y = temp_data$DIR, .f = download_template)
 
-      data = weather2:::sys.load.formatdata(data)
+      data = weather2:::sys_load_formatdata(data)
       max_size = max(max_size, data$size, na.rm = T)
       temp_data = dplyr::filter(data, size <= (max_size * threshold))
     }
@@ -210,7 +210,7 @@ sys.load_file.stm = function(data, title = "test_stm", attempt = 5, worker = 20,
   }
   options(warn = defaultW)
   #Return download process information ####
-  data = weather2:::sys.load.formatdata(data)
+  data = weather2:::sys_load_formatdata(data)
   success = dplyr::filter(data, exist == T)
   fail    = dplyr::filter(data, exist == F)
   time_end = Sys.time()
@@ -224,6 +224,6 @@ sys.load_file.stm = function(data, title = "test_stm", attempt = 5, worker = 20,
   cli::cli_alert_info(" Attemps: {attp_sum}")
   cli::cli_alert_info(" Success: {nrow(success)}")
   cli::cli_alert_info("    Fail: {nrow(fail)}")
-  if(list_fail){weather2:::sys.load.listfail(fail$Info)}
+  if(list_fail){weather2:::sys_load_listfail(fail$Info)}
   cli::cli_text("")
 }

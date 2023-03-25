@@ -1,147 +1,270 @@
-#' Calculate smoothing and filling data
+#' Calculate by smoothing and filling the columns, with linear models
 #'
-#' @param data Atmospheric sounding data
-#' @param based Parameter used for smoothing, often based on height, but can also be based on pressure or other parameters. Must ensure there is no NA values.
-#' @param value Value to be smoothed
-#' @param type Type of smoothing. Only accepts "moving", "linear", and "spline".
-#' @param name_as Column name of the smoothed data.
-#' @param fill Data to be filled based on 'based'.
-#' @param weight Weight for smoothing. Only used when type is "moving".
-#' @param df Degree of freedom. Only used when type is "spline".
+#' @param data The Data frame
+#' @param based A column within dataframe. This column must be "numeric-able", must not contain NAs, and must be unique
+#' @param value A column within data. This column must contain NAs
+#' @param trailing Remove trailing NAs within the value if T
+#' @param name_as Name of the new smoothed column. Default as predict_xxx, where xxx is the column name of the based.
 #'
 #' @return
 #' @export
 #'
-#' @examples calc(data, hght, uwnd, type = "moving")
-calc_smooth = function(data, based, value, name_as, type,
-                       weight = rep(1, 5), fill = seq(1, 50000, 1), df = 1){
-  # Prep work####
-  ## Get data from weather object####
-  if(class(data)[1] == "weather"){
-    data1 = data$data
-    unit1 = data$unit
+#' @examples calc_smooth_lm(data, x, y, trailing = F)
+calc_smooth_lm = function(data, based, value, trailing = T, name_as = ""){
+  #Check ####
+  if(weather2::sys_ckc_dataframe(value = data, value_name = "data")){return(data)}
+  if(weather2::sys_ckd_colexist(value = {{based}}, value_name = "based", data = data, data_name = "data")){return(data)}
+  if(weather2::sys_ckd_colexist(value = {{value}}, value_name = "value", data = data, data_name = "data")){return(data)}
+  if(weather2::sys_ckc_logical(value = trailing, value_name = "trailing")){return(data)}
+  if(weather2::sys_ckc_character(value = name_as, value_name = "name_as")){return(data)}
+
+  data0 = dplyr::select(data, x = {{based}})$x
+  if(weather2::sys_ckl_hasNA(list = data0, list_name = "based")){return(data)}
+  if(weather2::sys_ckl_numericable(list = data0, list_name = "based")){return(data)}
+  if(weather2::sys_ckl_ItemUnique(list = data0, list_name = "based")){return(data)}
+
+  data0 = dplyr::select(data, x = {{value}})$x
+  if(weather2::sys_ckl_hasNA(list = data0, list_name = "value")){return(data)}
+  if(weather2::sys_ckl_numericable(list = data0, list_name = "value")){return(data)}
+
+  #Get text name ####
+  name_based = colnames(dplyr::select(data, {{based}}))
+  name_value = colnames(dplyr::select(data, {{value}}))
+
+  #arrange data by x so data makes sense
+  #select part of the data, convert based into x and value into y for easier processing.
+  data = dplyr::arrange(data, {{based}})
+  data0 = dplyr::select(data, x = {{based}}, y = {{value}})
+
+  #mutate to give row number and list nas
+  data0 = dplyr::mutate(data0 ,
+                        row = 1:dplyr::n(),
+                        nas = is.na(y))
+
+  #filter the nas, get the row number, and get the rows 1 above and 1 behind it, and give them a group
+  ls_grp = dplyr::filter(data0, nas == T)$row
+  ls_grp = unique(c(ls_grp, (ls_grp+1), (ls_grp-1)))
+  df_grp = dplyr::filter(data0,
+                         row %in% ls_grp) %>%
+    dplyr::bind_rows(.,.) %>%
+    dplyr::arrange(x) %>%
+    dplyr::filter(nas == F) %>%
+    dplyr::slice(2:(dplyr::n()-1)) %>%
+    dplyr::mutate(groups = as.factor(ceiling((1:dplyr::n())/2)))
+
+  #left_join data0 to have groups, fill the gaps between groups, add a predict column with all nas (numeric)
+  data0 = dplyr::left_join(x = data0, y = dplyr::select(.data = df_grp, x, groups), by = "x") %>%
+    tidyr::fill(groups, .direction = "downup")
+
+  #create lm and the prediction. Add the prediction to data0
+  #find distinct, n replace the predict with NA if its a list of nas at the top n bottom
+  if(length(unique(df_grp$groups)) == 1){
+    lm = lm(formula = y~x, data = df_grp, singular.ok = T)
+    prediction = predict(object = lm, newdata = data0)
   } else {
-    data1 = data
+    lm = lm(formula = y~x * groups, data = df_grp, singular.ok = T)
+    prediction = predict(object = lm, newdata = data0)
   }
-  # Provide name_as if missing ####
-  if(missing(name_as)){
-    name_as = paste0(colnames(dplyr::select(data1, {{value}})), "_s")
+
+  data0 = dplyr::mutate(data0,
+                        predict = ifelse(nas == F, y, prediction)) %>%
+    dplyr::select(-groups) %>%
+    dplyr::distinct()
+  #if there is a known value, replace the predict with the known value
+  if(trailing){
+    na_first = data0$nas[1]
+    na_last  = data0$nas[nrow(data0)]
+    n = 1
+    while(data0$nas[n] == T){
+      data0$predict[n] = NA_real_
+      n = n +1
+    }
+    n = nrow(data0)
+    while(data0$nas[n] == T){
+      data0$predict[n] = NA_real_
+      n = n - 1
+    }
   }
-  # covert 'based' and 'value' into text ####
-  colname_based = colnames(dplyr::select(data1, {{based}}))
-  colname_value = colnames(dplyr::select(data1, {{value}}))
-
-  # Copy the data set, select used columns and rename ####
-  data2 = dplyr::select(data1, {{based}}, {{value}}) %>%
-    dplyr::rename(based = {{based}}, value = {{value}})
-
-  # calculate moving average ####
-  if(type == "moving"){
-     window = length(weight)
-     data2 = dplyr::mutate(data2, predict = as.numeric(stats::filter(value, weight/window)))
-
-     for(i in 1:nrow(data2)){
-       if(is.na(data2$predict[i])){
-         start = ceiling(i - window/2)
-         end   = floor(i + window/2)
-
-         if(start < 1){start = 1}
-         if(end > nrow(data2)){end = nrow(data2)}
-
-         data_temp = dplyr::select(data2, value)[start:end,]
-         data_temp = dplyr::summarise(data_temp, mean(value, na.rm = T))[[1]]
-         data2$predict[i] = data_temp
-       }
-     }
-     data2 = dplyr::select(data2, predict)
-
-     data_final = dplyr::mutate(data1, "{name_as}" := data2$predict)
+  #return the smoothed data! first guess the appropriate column name
+  if(name_as == ""){
+    name_as = paste0("predict_", name_value)
   }
-  # calculate linear smoothening ####
-  if(type == "linear"){
-    #Set data to be NA-less, Calculate groups for each set and the corrected data_gp_cor
-    data2 = tidyr::drop_na(data2, based, value)
+  expected_colname = weather2::sys_tld_GetColname(value = name_as, data = data)
+  data = dplyr::mutate(data, "{expected_colname}" := data0$predict)
 
-    data_gp = dplyr::bind_rows(data2, data2) %>%
-      dplyr::arrange(based) %>%
-      dplyr::slice(2:(dplyr::n()-1)) %>%
-      dplyr::mutate(group = as.factor(floor((seq(1, dplyr::n(), 1) + 1)/2)))
-
-    data_gp_cor = dplyr::mutate(data_gp,
-                               n = ((seq(1, dplyr::n(), 1)+1) %% 2) * 0.0001,
-                               type = "Original") %>%
-      dplyr::mutate(based = based - n) %>%
-      dplyr::select(-n)
-
-    #Set the predict table
-    temp = dplyr::select(data1, {{based}})
-    colnames(temp) = "based"
-
-    fill = fill[fill >= min(data_gp_cor$based) & fill <= max(data_gp_cor$based)]
-    fill = tibble::tibble(based = fill) %>%
-      dplyr::filter(!(based %in% data_gp$based)) %>%
-      dplyr::filter(!(based %in% temp$based))
-    colnames(fill) = colname_based
-
-    data1 = dplyr::bind_rows(data1, fill)
-
-    data_predict = dplyr::select(data1, {{based}}) %>%
-      dplyr::rename(based = {{based}}) %>%
-      dplyr::mutate(value = NA_real_,
-                    group = as.factor(NA_real_),
-                    type = "Predict",
-                    order = seq(1, dplyr::n(), 1)) %>%
-      dplyr::bind_rows(data_gp_cor) %>%
-      dplyr::arrange(type) %>%
-      dplyr::arrange(based) %>%
-      tidyr::fill(group) %>%
-      dplyr::filter(type == "Predict") %>%
-      dplyr::arrange(order)
-
-
-    #Create formula for prediction
-    formula = lm(formula = value ~ based * group, data = data_gp)
-
-    data_predict = dplyr::mutate(data_predict,
-                                 value = predict(formula, data_predict)) %>%
-      dplyr::relocate(based, value, group, type)
-
-    #Join data_predict with data1
-    data_final = dplyr::mutate(data1, "{name_as}" := data_predict$value) %>%
-      dplyr::arrange({{based}})
-  }
-  # calculate spline smoothening ####
-  if(type == "spline"){
-    #Set data to be NA-less and create formula
-    data2 = tidyr::drop_na(data2)
-    df = nrow(data2) * df
-    formula = smooth.spline(x = data2$based, y = data2$value, df = df)
-
-    #Set fill to exclude min max and any value of data2$based
-    fill = fill[fill >= min(data2$based) & fill <= max(data2$based)]
-    fill = tibble::tibble(based = fill) %>%
-      dplyr::filter(!(based %in% data2$based))
-    colnames(fill) = colname_based
-
-    data1 = dplyr::bind_rows(data1, fill)
-
-    data2 = dplyr::select(data1, {{colname_based}}) %>%
-      dplyr::rename(based = {{colname_based}}) %>%
-      dplyr::mutate(based = ifelse(is.na(based), -999999999999, based))
-
-    data1 = dplyr::mutate(data1, "{name_as}" := ifelse(data2$based == -999999999999, NA, stats::predict(formula, data2$based)$y)) %>%
-      dplyr::arrange({{based}})
-
-    #Join data_predict with data_org
-    data_final = data1
-  }
-  # Return the data ####
-  if(class(data) == "weather"){
-    data$data = data_final
-    data_final = data
-  }
-  return(data_final)
+  return(data)
 }
-# calc_smooth(data, hght, uwnd, type = "linear") %>%
-#   calc_smooth(hght, vwnd, type = "linear") %>%
-#   draw_hodo(uwnd_s, vwnd_s, pres, hght)
+
+
+
+
+#' Calculate by smoothing the column, by moving average
+#'
+#' @param data The Data frame
+#' @param based A column within dataframe. This column must be "numeric-able", must not contain NAs, and must be unique
+#' @param value A column within data
+#' @param type Accepts 1 string of "left", "center", or "right"
+#' @param weight Weighting or the size of the window as an integer
+#' @param name_as Name of the new smoothed column. Default as predict_xxx, where xxx is the column name of the based.
+#' @param NAs Removes NA in the smoothed column by treating missing data
+#'
+#' @return
+#' @export
+#'
+#' @examples calc_smooth_ma(data, x, y, weight = 7)
+calc_smooth_ma = function(data, based, value, type = "center", weight = 3, name_as = "", NAs = T){
+  #Check ####
+  if(weather2::sys_ckc_dataframe(value = data, value_name = "data")){return(data)}
+  if(weather2::sys_ckd_colexist(value = {{based}}, value_name = "based", data = data, data_name = "data")){return(data)}
+  if(weather2::sys_ckd_colexist(value = {{value}}, value_name = "value", data = data, data_name = "data")){return(data)}
+  if(weather2::sys_ckc_character(value = type, value_name = "type")){return(data)}
+  if(weather2::sys_ckl_ItemIn(list = type, list_name = "type", expected = c("center", "top", "bottom"))){return(data)}
+  if(weather2::sys_ckc_numeric(value = weight, value_name = "weight")){return(data)}
+  if(weather2::sys_ckc_logical(value = NAs, value_name = "NAs")){return(data)}
+
+  data0 = dplyr::select(data, x = {{based}})$x
+  if(weather2::sys_ckl_hasNA(list = data0, list_name = "based")){return(data)}
+  if(weather2::sys_ckl_numericable(list = data0, list_name = "based")){return(data)}
+  if(weather2::sys_ckl_ItemUnique(list = data0, list_name = "based")){return(data)}
+
+  data0 = dplyr::select(data, x = {{value}})$x
+  if(weather2::sys_ckl_numericable(list = data0, list_name = "value")){return(data)}
+
+  rows = nrow(data)
+  if(length(weight) == 1){
+    weight = as.integer(weight)
+    if(weather2::sys_ckc_integer(value = weight, value_name = "weight")){return(data)}
+    if(weather2::sys_ckl_NumericValue(list = weight, list_name = "weight", expected = rows, mode = "<=")){return(data)}
+  } else if(length(weight) > 1){
+    len = length(weight)
+    sum = sum(weight, na.rm = T)
+    if(weather2::sys_ckl_NumericValue(list = len, list_name = "weight", expected = rows, mode = "<=")){return(data)}
+    if(weather2::sys_ckl_NumericValue(list = sum, list_name = "sum of weight", expected = 1, mode = "==")){return(data)}
+  }
+
+  #arrange the data by based, grab based as x and value as y, mutate to have a list of na ####
+  data = dplyr::arrange(data, {{based}})
+  data0 = dplyr::select(data, x = {{based}}, y = {{value}})
+  #calculate weight and get the sides ####
+  if(length(weight) == 1){weight = rep(1/weight, weight)}
+  weight = weight[length(weight):1]
+
+  if(type == "center"){
+    sides = 2
+  } else if (type == "top") {
+    sides = 1
+    weight = weight[length(weight):1]
+    data0 = dplyr::arrange(data0, dplyr::desc(x))
+  } else if (type == "bottom"){
+    sides = 1
+  }
+  #start calculating ####
+  prediction = as.numeric(stats::filter(x = data0$y, filter = weight, method = "convolution", sides = sides))
+  data0 = dplyr::mutate(data0, predict = prediction)
+  if(NAs == F){
+    #Add NA rows above and below data0, and add row information
+    data0 = dplyr::mutate(data0, type = "ORIGINAL") %>%
+      dplyr::bind_rows(tibble::tibble(x = NA, y = NA, predict = NA, type = "ADDED", .rows = length(weight)),
+                       .,
+                       tibble::tibble(x = NA, y = NA, predict = NA, type = "ADDED", .rows = length(weight))) %>%
+      dplyr::mutate(row = 1:dplyr::n())
+
+    #Reverse the weight back to normal
+    #Calculate index information for smoothening
+    weight = weight[length(weight):1]
+    if(type == "center"){
+      if((length(weight) %% 2) == 1){
+        data0 = dplyr::mutate(data0,
+                              start = row - floor(length(weight)/2),
+                              end   = row + floor(length(weight)/2),
+                              run   = (type == "ORIGINAL" & is.na(predict)))
+      }
+      if((length(weight) %% 2) == 0){
+        data0 = dplyr::mutate(data0,
+                              start = row - (length(weight)/2 - 1),
+                              end   = row + (length(weight)/2),
+                              run   = (type == "ORIGINAL" & is.na(predict)))
+      }
+    }
+    if(type == "top" | type == "bottom"){
+      data0 = dplyr::mutate(data0,
+                            start = row - length(weight) + 1,
+                            end   = row,
+                            run   = (type == "ORIGINAL" & is.na(predict)))
+    }
+
+    #Calculate!
+    list_run = dplyr::filter(data0, run == T)$row
+    for(i in list_run){
+      reana = data0[data0$start[i]:data0$end[i], "y"] %>%
+        dplyr::mutate(w = weight,
+                      s = y*w)
+      sum   = sum(reana$s, na.rm = T)
+      data0$predict[i] = sum
+    }
+    data0 = dplyr::filter(data0, type != "ADDED")
+  }
+  data0 = dplyr::arrange(data0, x)
+  #return the data ####
+  if(name_as == ""){name_as = paste0("predict_", colnames(dplyr::select(data, {{value}})))}
+  expected_colname = weather2::sys_tld_GetColname(value = name_as, data = data)
+  data = dplyr::mutate(data, "{expected_colname}" := data0$predict)
+  return(data)
+}
+
+
+
+
+#' Calculate by smoothing the column, by smoothing spline
+#'
+#' @param data The Data frame
+#' @param based A column within dataframe. This column must be "numeric-able", must not contain NAs, and must be unique
+#' @param value A column within data
+#' @param df Degree of freedom. Must be between 1 and the number of rows in data (rows with NA values excluded)
+#' @param name_as Name of the new smoothed column. Default as predict_xxx, where xxx is the column name of the based.
+#'
+#' @return
+#' @export
+#'
+#' @examples calc_smooth_sp(data, x, y, df = 0.7*nrow(data), name_as = "")
+calc_smooth_sp = function(data, based, value, df, name_as = ""){
+  #Check ####
+  if(weather2::sys_ckc_dataframe(value = data, value_name = "data")){return(data)}
+  if(weather2::sys_ckd_colexist(value = {{based}}, value_name = "based", data = data, data_name = "data")){return(data)}
+  if(weather2::sys_ckd_colexist(value = {{value}}, value_name = "value", data = data, data_name = "data")){return(data)}
+  if(weather2::sys_ckc_numeric(value = df, value_name = "df")){return(data)}
+
+  data0 = dplyr::select(data, x = {{based}})$x
+  if(weather2::sys_ckl_hasNA(list = data0, list_name = "based")){return(data)}
+  if(weather2::sys_ckl_numericable(list = data0, list_name = "based")){return(data)}
+  if(weather2::sys_ckl_ItemUnique(list = data0, list_name = "based")){return(data)}
+
+  data0 = dplyr::select(data, x = {{value}})$x
+  if(weather2::sys_ckl_hasNA(list = data0, list_name = "value")){return(data)}
+  if(weather2::sys_ckl_numericable(list = data0, list_name = "value")){return(data)}
+
+  data0 = dplyr::select(data, x = {{based}}, y = {{value}}) %>% tidyr::drop_na()
+  if(weather2::sys_ckl_NumericValue(list = df, list_name = "df", expected = nrow(data0), mode = "<=")){return(data)}
+  if(weather2::sys_ckl_NumericValue(list = df, list_name = "df", expected = 1, mode = ">")){return(data)}
+
+  #Format the data and duplicate to data0 and data1 ####
+  data = dplyr::arrange(data, {{based}})
+  data0= dplyr::select(data,
+                       x = {{based}},
+                       y = {{value}})
+
+  #Make the spline formula ####
+  data1= tidyr::drop_na(data0)
+  sp = stats::smooth.spline(x = data1$x, y = data1$y, df = df)
+
+  #Return the smooth.spline to data0 ####
+  prediction = stats::predict(object = sp, x = data0$x)$y
+  data0 = dplyr::mutate(data0,
+                        predict = prediction)
+
+  #Return data0 to data ####
+  if(name_as == ""){name_as = paste0("predict_", colnames(dplyr::select(data, {{value}})))}
+  expected_colname = weather2::sys_tld_GetColname(value = name_as, data = data)
+  data = dplyr::mutate(data, "{expected_colname}" := data0$predict)
+  return(data)
+}

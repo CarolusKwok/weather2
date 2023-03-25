@@ -15,13 +15,13 @@
 #' @return
 #' @export
 #'
-#' @examples sys.ck.list_length(c(1,2,3), "obj", 2L) #Return `TRUE`
-sys.ck.list_length = function(list, list_name, expected, mode = "==", silent = F){
+#' @examples sys_ckl_length(c(1,2,3), "obj", 2L) #Return `TRUE`
+sys_ckl_length = function(list, list_name, expected, mode = "==", silent = F){
   #Check ####
-  if(weather2:::sys.help_hasArg(list_name, "list_name")){return(T)}
-  if(weather2:::sys.help_hasArg(list, {{list_name}})){return(T)}
-  if(weather2:::sys.help_hasArg(expected, "expected")){return(T)}
-  if(weather2::sys.ck.class_integer(value = expected, value_name = "expected")){return(T)}
+  if(weather2:::sys_hp_hasArg(list_name, "list_name")){return(T)}
+  if(weather2:::sys_hp_hasArg(list, {{list_name}})){return(T)}
+  if(weather2:::sys_hp_hasArg(expected, "expected")){return(T)}
+  if(weather2::sys_ckc_integer(value = expected, value_name = "expected")){return(T)}
   if(length(expected) != 1){
     cli::cli_text('Error: {.var expected} must be 1 value only.')
     cli::cli_bullets(c("x" = 'You supplied nothing!'))
@@ -37,7 +37,7 @@ sys.ck.list_length = function(list, list_name, expected, mode = "==", silent = F
     cli::cli_bullets(c("x" = 'You should supply "==", "!=", ">", "<", ">=" and "<="!'))
     return(T)
   }
-  if(weather2::sys.ck.class_logical(silent, "silent")){return(T)}
+  if(weather2::sys_ckc_logical(silent, "silent")){return(T)}
   #Work ####
   length_list = length(list)
   if(mode == "==" & !(length_list == expected)){
@@ -98,19 +98,19 @@ sys.ck.list_length = function(list, list_name, expected, mode = "==", silent = F
 #' @return
 #' @export
 #'
-#' @examples sys.ck.list_item.in(c(1, 2, 3, 4), "obj", c("1", "2", "3"), mode = "out") #Returns `TRUE`
-sys.ck.list_item.in = function(list, list_name, expected, mode = "in", silent = F){
+#' @examples sys_ckl_ItemIn(c(1, 2, 3, 4), "obj", c("1", "2", "3"), mode = "out") #Returns `TRUE`
+sys_ckl_ItemIn = function(list, list_name, expected, mode = "in", silent = F){
   #Check ####
-  if(weather2:::sys.help_hasArg(list_name, "list_name")){return(T)}
-  if(weather2:::sys.help_hasArg(list, {{list_name}})){return(T)}
-  if(weather2:::sys.help_hasArg(expected, "expected")){return(T)}
-  if(weather2::sys.ck.list_length(mode, "mode", expected = 1L)){return(T)}
+  if(weather2:::sys_hp_hasArg(list_name, "list_name")){return(T)}
+  if(weather2:::sys_hp_hasArg(list, {{list_name}})){return(T)}
+  if(weather2:::sys_hp_hasArg(expected, "expected")){return(T)}
+  if(weather2::sys_ckl_length(mode, "mode", expected = 1L)){return(T)}
   if(!(mode %in% c("in", "out"))){
     cli::cli_text('Error: {.var mode} must be {.var in} or {.var out}.')
     cli::cli_bullets(c("x" = 'You supplied {.var {mode}}!'))
     return(T)
   }
-  if(weather2::sys.ck.class_logical(value = silent, value_name = "silent")){return(T)}
+  if(weather2::sys_ckc_logical(value = silent, value_name = "silent")){return(T)}
 
   #Work ####
   list_in = list %in% expected
@@ -140,12 +140,12 @@ sys.ck.list_item.in = function(list, list_name, expected, mode = "in", silent = 
 #' @return
 #' @export
 #'
-#' @examples sys.ck.list_numericable(list = c(1, 1, "a"), list_name = "obj") #Returns `TRUE`
-sys.ck.list_numericable = function(list, list_name, silent = F){
+#' @examples sys_ckl_numericable(list = c(1, 1, "a"), list_name = "obj") #Returns `TRUE`
+sys_ckl_numericable = function(list, list_name, silent = F){
   #Check ####
-  if(weather2:::sys.help_hasArg(list_name, "list_name")){return(T)}
-  if(weather2:::sys.help_hasArg(list, {{list_name}})){return(T)}
-  if(weather2::sys.ck.class_logical(silent, "silent")){return(T)}
+  if(weather2:::sys_hp_hasArg(list_name, "list_name")){return(T)}
+  if(weather2:::sys_hp_hasArg(list, {{list_name}})){return(T)}
+  if(weather2::sys_ckc_logical(silent, "silent")){return(T)}
   #Work ####
   list = list[!is.na(list)]
   list = suppressWarnings(as.numeric(list))
@@ -171,14 +171,14 @@ sys.ck.list_numericable = function(list, list_name, silent = F){
 #' @return
 #' @export
 #'
-#' @examples sys.ck.list_has.na(c(1, 2, 3), list_name = "obj") #Returns `TRUE`
-sys.ck.list_has.na = function(list, list_name, mode = "exclude", silent = F){
+#' @examples sys_ckl_hasNA(c(1, 2, 3), list_name = "obj") #Returns `TRUE`
+sys_ckl_hasNA = function(list, list_name, mode = "exclude", silent = F){
   #Check ####
-  if(weather2:::sys.help_hasArg(list_name, "list_name")){return(T)}
-  if(weather2:::sys.help_hasArg(list, {{list_name}})){return(T)}
-  if(weather2::sys.ck.list_length(mode, "mode", 1L)){return(T)}
-  if(weather2::sys.ck.list_item.in(mode, "mode", expected = c("include", "exclude"))){return(T)}
-  if(weather2::sys.ck.class_logical(silent, "silent")){return(T)}
+  if(weather2:::sys_hp_hasArg(list_name, "list_name")){return(T)}
+  if(weather2:::sys_hp_hasArg(list, {{list_name}})){return(T)}
+  if(weather2::sys_ckl_length(mode, "mode", 1L)){return(T)}
+  if(weather2::sys_ckl_ItemIn(mode, "mode", expected = c("include", "exclude"))){return(T)}
+  if(weather2::sys_ckc_logical(silent, "silent")){return(T)}
 
   #Work####
   any_na = anyNA(list)
@@ -211,14 +211,14 @@ sys.ck.list_has.na = function(list, list_name, mode = "exclude", silent = F){
 #' @return
 #' @export
 #'
-#' @examples sys.ck.list_item.unique(list = c(1,2,3), "obj", mode = "common") #Returns `TRUE`
-sys.ck.list_item.unique = function(list, list_name, mode = "all unique", silent = F){
+#' @examples sys_ckl_ItemUnique(list = c(1,2,3), "obj", mode = "common") #Returns `TRUE`
+sys_ckl_ItemUnique = function(list, list_name, mode = "all unique", silent = F){
   #Check ####
-  if(weather2:::sys.help_hasArg(list_name, "list_name")){return(T)}
-  if(weather2:::sys.help_hasArg(list, {{list_name}})){return(T)}
-  if(weather2::sys.ck.list_length(mode, "mode", 1L)){return(T)}
-  if(weather2::sys.ck.list_item.in(mode, "mode", expected = c("all unique", "common"))){return(T)}
-  if(weather2::sys.ck.class_logical(silent, "silent")){return(T)}
+  if(weather2:::sys_hp_hasArg(list_name, "list_name")){return(T)}
+  if(weather2:::sys_hp_hasArg(list, {{list_name}})){return(T)}
+  if(weather2::sys_ckl_length(mode, "mode", 1L)){return(T)}
+  if(weather2::sys_ckl_ItemIn(mode, "mode", expected = c("all unique", "common"))){return(T)}
+  if(weather2::sys_ckc_logical(silent, "silent")){return(T)}
 
   #Work ####
   unique_list = unique(list)
@@ -257,17 +257,17 @@ sys.ck.list_item.unique = function(list, list_name, mode = "all unique", silent 
 #' @export
 #'
 #' @examples
-sys.ck.list_numeric.value = function(list, list_name, expected, mode = "==", silent = F){
+sys_ckl_NumericValue = function(list, list_name, expected, mode = "==", silent = F){
   #Check ####
-  if(weather2:::sys.help_hasArg(value = list_name, value_name = "list_name")){return(T)}
-  if(weather2:::sys.help_hasArg(value = list, value_name = {{list_name}})){return(T)}
-  if(weather2:::sys.help_hasArg(value = expected, value_name = "expected")){return(T)}
+  if(weather2:::sys_hp_hasArg(value = list_name, value_name = "list_name")){return(T)}
+  if(weather2:::sys_hp_hasArg(value = list, value_name = {{list_name}})){return(T)}
+  if(weather2:::sys_hp_hasArg(value = expected, value_name = "expected")){return(T)}
 
-  if(weather2::sys.ck.list_numericable(list, list_name = "list")){return(T)}
-  if(weather2::sys.ck.class_num.int(value = expected, value_name = "expected")){return(T)}
-  if(weather2::sys.ck.list_length(list = expected, list_name = "expected", expected = 1L)){return(T)}
-  if(weather2::sys.ck.list_item.in(mode, list_name = "mode", expected = c("==", "!=", ">", "<", ">=", "<="))){return(T)}
-  if(weather2::sys.ck.class_logical(value = silent, value_name = "silent")){return(T)}
+  if(weather2::sys_ckl_numericable(list, list_name = "list")){return(T)}
+  if(weather2::sys_ckc_numint(value = expected, value_name = "expected")){return(T)}
+  if(weather2::sys_ckl_length(list = expected, list_name = "expected", expected = 1L)){return(T)}
+  if(weather2::sys_ckl_ItemIn(mode, list_name = "mode", expected = c("==", "!=", ">", "<", ">=", "<="))){return(T)}
+  if(weather2::sys_ckc_logical(value = silent, value_name = "silent")){return(T)}
 
   #Work ####
   if(mode == "=="){

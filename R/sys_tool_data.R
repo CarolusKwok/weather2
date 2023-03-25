@@ -6,13 +6,13 @@
 #' @return A character
 #' @export
 #'
-#' @examples sys.tl.data_get.colname(x, data = tibble::tibble(x = 0)) #Returns "x_1"
-sys.tl.data_get.colname = function(value, data){
+#' @examples sys_tld_GetColname(x, data = tibble::tibble(x = 0)) #Returns "x_1"
+sys_tld_GetColname = function(value, data){
   #Check ####
-  if(weather2:::sys.help_hasArg(value, value_name = "value")){return(T)}
-  if(weather2:::sys.help_hasArg(data, value_name = "data")){return(T)}
+  if(weather2:::sys_hp_hasArg(value, value_name = "value")){return(T)}
+  if(weather2:::sys_hp_hasArg(data, value_name = "data")){return(T)}
   #Work ####
-  value = weather2:::sys.help_sym2chr({{value}})
+  value = weather2:::sys_hp_sym2chr({{value}})
   colnames_data = colnames(data)
   name_trial = value
   n = 0

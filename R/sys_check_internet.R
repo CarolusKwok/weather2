@@ -7,8 +7,8 @@
 #' @return
 #' @export
 #'
-#' @examples sys.ck.internet()
-sys.ck.internet = function(attempt = 5, silent = T, websites = c("https://google.com", "https://www.un.org/")){
+#' @examples sys_ck_internet()
+sys_ck_internet = function(attempt = 5, silent = T, websites = c("https://google.com", "https://www.un.org/")){
   flag = F
   for(i in 1:attempt){
     for(w in websites){

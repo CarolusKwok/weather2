@@ -8,8 +8,8 @@
 #'
 #' @noRd
 #'
-#' @examples sys.help_hasArg(1, "obj")
-sys.help_hasArg = function(value, value_name){
+#' @examples sys_hp_hasArg(1, "obj")
+sys_hp_hasArg = function(value, value_name){
   if(!hasArg(value_name)){
     cli::cli_text('Error: {.var value_name} must be supplied.')
     cli::cli_bullets(c("x" = 'You supplied nothing!'))
@@ -30,5 +30,5 @@ sys.help_hasArg = function(value, value_name){
 #'
 #' @noRd
 #'
-#' @examples sys.help_sym2chr(hiiiii)
-sys.help_sym2chr = function(x){return(rlang::as_name(rlang::quo({{x}})))}
+#' @examples sys_hp_sym2chr(hiiiii)
+sys_hp_sym2chr = function(x){return(rlang::as_name(rlang::quo({{x}})))}
