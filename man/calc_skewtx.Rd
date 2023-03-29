@@ -4,12 +4,16 @@
 \alias{calc_skewtx}
 \title{Calculate Skew-T plot x-coordinate}
 \usage{
-calc_skewtx(data, x, y, name_as = NULL, angle = 45)
+calc_skewtx(data, x, y, angle, name_as = NULL)
 }
 \arguments{
 \item{name_as}{}
 }
 \description{
 Calculate Skew-T plot x-coordinate
+}
+\examples{
+
+
 }
 \keyword{internal}

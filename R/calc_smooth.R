@@ -24,7 +24,6 @@ calc_smooth_lm = function(data, based, value, trailing = T, name_as = ""){
   if(weather2::sys_ckl_ItemUnique(list = data0, list_name = "based")){return(data)}
 
   data0 = dplyr::select(data, x = {{value}})$x
-  if(weather2::sys_ckl_hasNA(list = data0, list_name = "value")){return(data)}
   if(weather2::sys_ckl_numericable(list = data0, list_name = "value")){return(data)}
 
   #Get text name ####
@@ -87,9 +86,9 @@ calc_smooth_lm = function(data, based, value, trailing = T, name_as = ""){
   }
   #return the smoothed data! first guess the appropriate column name
   if(name_as == ""){
-    name_as = paste0("predict_", name_value)
+    name_as = paste0("slm_", name_value)
   }
-  expected_colname = weather2::sys_tld_GetColname(value = name_as, data = data)
+  expected_colname = weather2::sys_tld_GetColname(value = {{name_as}}, data = data)
   data = dplyr::mutate(data, "{expected_colname}" := data0$predict)
 
   return(data)

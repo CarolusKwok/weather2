@@ -1,5 +1,10 @@
 #' Draws a blank Skew-T plot
 #'
+#'
+#' THIS IS SCRAPPED DO NOT USE
+#'
+#'
+#'
 #' @param data
 #' @param pres
 #' @param temp
@@ -18,7 +23,8 @@
 draw_td_skewt = function(data,
                          pres_col,
                          params,
-                         groups  = NULL,
+                         colors,
+                         groups,
                          pres    = c(seq(1000, 100, -100), 50, 25, 10),
                          temp    = seq(-120, 50, 10),
                          dry_adi = seq(-100, 100, 10),
@@ -26,8 +32,7 @@ draw_td_skewt = function(data,
                          isohume = seq(-100, 100, 10),
                          angle = 45,
                          pres_lim = NULL,
-                         temp_lim = c(-80, 50),
-                         silent = F){
+                         temp_lim = NULL){
   #Preset functions ####
   adi_process1 = function(adi, pres_lim){
     data = tibble::tibble(temp1 = adi + 273.15,
@@ -45,23 +50,30 @@ draw_td_skewt = function(data,
     return(data)
   }
 
-  #Data processing
-  data = weather2::calc_skewt(data = data, x = params, y = pres_col, angle = angle)
-  if(!silent){
-    cli::cli_alert_info("{.var draw_td_skewt}: Transformation complete.")
-    cli::cli_bullets(text = c(" " = "Here are the columns you may use:"))
-    cli::cli_text("{colnames(data)}")
-  }
-
   #Finding limits ####
-  if(is.null(pres_lim)){pres_lim = c(max(pres), min(pres))}
-  if(is.null(temp_lim)){temp_lim = c(min(temp), max(temp))}
-  data_lim_pres = tibble::tibble(y = pres_lim,
-                                 x = 0) %>%
+  if(is.null(pres_lim)){
+    data_pres_lim = data %>%
+      dplyr::select(x = pres_col)
+    pres_lim = c(max(data_pres_lim$x), min(data_pres_lim$x))
+    rm(data_pres_lim)
+  }
+  if(is.null(temp_lim)){
+    data_temp_lim = data %>%
+      dplyr::select(x = params)
+    min_data_temp_lim = lapply(X = data_temp_lim, min, na.rm = T) %>%
+      unlist() %>%
+      min(na.rm = T)
+    max_data_temp_lim = lapply(X = data_temp_lim, max, na.rm = T) %>%
+      unlist() %>%
+      max(na.rm = T)
+    temp_lim = c((min_data_temp_lim - 5), (max_data_temp_lim + 5))
+
+    rm(data_temp_lim, min_data_temp_lim, max_data_temp_lim)
+  }
+  data_lim_pres = tibble::tibble(y = pres_lim, x = 0) %>%
     weather2::calc_skewt(x = "x", y = "y", angle = angle, mode = "y")
 
-  data_lim_temp = tibble::tibble(x = temp_lim,
-                                 y = max(pres_lim)) %>%
+  data_lim_temp = tibble::tibble(x = temp_lim, y = max(pres_lim)) %>%
     weather2::calc_skewt(x = "x", y = "y", angle = angle, mode = "x")
 
   #START PLOTTING ####
@@ -86,7 +98,7 @@ draw_td_skewt = function(data,
                             pe = c(pres_lim[2], pres_lim[2])) %>%
     weather2::calc_skewt(x = "ts", y = c("ps", "pe"), angle = angle)
 
-  ## Adi Lines ####
+  ##Adi Lines ####
   data_dry = adi_process1(adi = dry_adi, pres_lim = pres_lim) %>%
     weather2::calc_adi_dry(pres1 = pres1, pres2 = pres2, temp1 = temp1, overwrite = T) %>%
     adi_process2(angle = angle)
@@ -100,8 +112,48 @@ draw_td_skewt = function(data,
     adi_process2(angle = angle)
 
 
-  #THE PLOT ITSELF ####
-  plot = ggplot2::ggplot(data)+
+
+  #Data processing ####
+  print("Fuck")
+  data_sel_y = tibble::tibble(.rows = nrow(data))
+  data_sel_x = tibble::tibble(.rows = nrow(data))
+  data_sel_g = tibble::tibble(.rows = nrow(data))
+
+  if(hasArg(pres_col)){
+    data_sel_y = dplyr::select(data,
+                               y = pres_col)
+  }
+  if(hasArg(params)){
+    data_sel_x = dplyr::select(data,
+                               x = params)
+  }
+  if(hasArg(groups)){
+    data_sel_g = dplyr::select(data,
+                               g = groups)
+  }
+
+  data_sel = dplyr::bind_cols(data_sel_y,
+                              data_sel_x,
+                              data_sel_g) %>%
+    weather2::calc_skewt(y = "y", x = paste0("x", 1:length(params)), angle = angle) %>%
+    dplyr::mutate(label = "")
+
+  print("YOLO")
+  if(!hasArg(groups)){
+    data_sel = data_sel
+  } else if(length(groups) == 1){
+    data_sel = dplyr::mutate(data_sel,
+                             label = g)
+  } else if (length(groups) > 1) {
+    for(i in 1:length(groups)){
+      data_sel = dplyr::mutate(data_sel,
+                               label = paste(label, !!rlang::sym(paste0("g", i))))
+    }
+  }
+
+  print(data_sel)
+  #Base plot itself ####
+  plot = ggplot2::ggplot(data_sel)+
     ggplot2::geom_segment(data = data_pres, ggplot2::aes(y = x1_sty,
                                                          yend = x2_sty,
                                                          x = x1_stx,
@@ -154,5 +206,21 @@ draw_td_skewt = function(data,
                    plot.margin = ggplot2::margin(5,5,5,5))+
     ggplot2::labs(x = "Temperature",
                   y = "Pressure")
+
+  #Additional lines ####
+  for(i in 1:length(params)){
+    plot = plot +
+      ggplot2::geom_path(ggplot2::aes(x = !!rlang::sym(paste0("x", i, "_stx")),
+                                      y = !!rlang::sym(paste0("x", i, "_sty"))),
+                         color = colors[[i]])
+  }
+
+  #Facet wrap for groups ####
+  if(hasArg(groups)){
+    plot = plot +
+      ggplot2::facet_wrap(ggplot2::vars(label))
+  }
+
+  #Return the plot ####
   return(plot)
 }

@@ -6,23 +6,26 @@
 \usage{
 draw_td_skewt(
   data,
+  pres_col,
+  params,
+  colors,
+  groups,
   pres = c(seq(1000, 100, -100), 50, 25, 10),
   temp = seq(-120, 50, 10),
   dry_adi = seq(-100, 100, 10),
   wet_adi = seq(-100, 100, 10),
   isohume = seq(-100, 100, 10),
   angle = 45,
-  size = 10,
   pres_lim = NULL,
-  temp_lim = c(-80, 50)
+  temp_lim = NULL
 )
 }
 \arguments{
-\item{temp_lim}{}
+\item{isohume}{}
 }
 \value{
 
 }
 \description{
-Draws a blank Skew-T plot
+THIS IS SCRAPPED DO NOT USE
 }

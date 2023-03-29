@@ -10,71 +10,43 @@
 #' @export
 #'
 #' @examples
-calc_skewt = function(data, x, y, mode = NULL, angle = 45){
-  #Check
-  if(weather2::sys_ckc_dataframe(value = data, value_name = "data")){return(data)}
-  if(weather2::sys_ckc_character(value = x, value_name = "x")){return(data)}
-  if(weather2::sys_ckc_character(value = y, value_name = "y")){return(data)}
-  for(i in x){
-    if(weather2::sys_ckd_colexist(value = {{i}}, value_name = "x", data = data, data_name = "data")){return(data)}
+calc_skewt = function(data, x, y, angle, name_as = NULL, overwrite = F){
+  #Check ####
+  if(weather2::sys_ckc_dataframe(data, "data")){return(data)}
+  if(weather2::sys_ckd_colexist(value = {{x}}, value_name = "x", data = data, data_name = "data")){return(data)}
+  if(weather2::sys_ckd_colexist(value = {{y}}, value_name = "y", data = data, data_name = "data")){return(data)}
+  if(weather2::sys_ckd_colexist(value = {{angle}}, value_name = "angle", data = data, data_name = "data")){return(data)}
+  if(!is.null(name_as)){
+    if(weather2::sys_ckl_length(name_as, "name_as", expected = 2L, mode = "==")){return(data)}
+    if(weather2::sys_ckc_character(name_as, "name_as")){return(data)}
   }
-  for(i in y){
-    if(weather2::sys_ckd_colexist(value = {{i}}, value_name = "y", data = data, data_name = "data")){return(data)}
-    data0 = dplyr::select(data, x = {{i}})$x
-    if(weather2::sys_ckl_NumericValue(list = data0, list_name = i, expected = 0, mode = ">")){return(data)}
+  if(weather2::sys_ckc_logical(overwrite, value_name = "overwrite")){return(data)}
+
+  #Calculate ####
+  data1 = dplyr::select(data,
+                        x = {{x}},
+                        y = {{y}},
+                        a = {{angle}}) %>%
+    weather2:::calc_skewtx(x = x, y = y, angle = a, name_as = "x2") %>%
+    weather2:::calc_skewty(y, name_as = "y2")
+
+  #Return the data ####
+  if(is.null(name_as)){
+    name_as = weather2:::sys_hp_sym2chr({{x}})
+    name_as = paste0(name_as, c("_stx", "_sty"))
+  }
+  name_x = name_as[1]
+  name_y = name_as[2]
+  if(!overwrite){
+    name_x = weather2::sys_tld_GetColname({{name_x}}, data)
+    name_y = weather2::sys_tld_GetColname({{name_y}}, data)
   }
 
-  if(!is.null(mode)){
-    if(weather2::sys_ckl_length(list = mode, list_name = "mode", expected = 1L, mode = "<=")){return(data)}
-    if(weather2::sys_ckl_ItemIn(list = mode, list_name = "mode", expected = c("x", "y"), mode = "in")){return(data)}
-  }
-  if(weather2::sys_ckc_numeric(angle, "angle")){return(data)}
-
-  #Calculate
-  if(is.null(mode)){
-    if(length(x) >= length(y)){mode = "x"}
-    if(length(x) < length(y)){mode = "y"}
-  }
-  if(mode == "x"){
-    for(name in x){
-      name_x = paste0(name, "_stx")
-      name_y = paste0(name, "_sty")
-      name_x = weather2::sys_tld_GetColname({{name_x}}, data)
-      name_y = weather2::sys_tld_GetColname({{name_y}}, data)
-
-      data_temp = dplyr::select(data,
-                                x = {{name}},
-                                y = {{y}}) %>%
-        weather2:::calc_skewtx(x = x, y = y, name_as = "XXX", angle = angle) %>%
-        weather2:::calc_skewty(y = y, name_as = "YYY")
-
-      data = dplyr::mutate(data,
-                           "{name_x}" := data_temp$XXX,
-                           "{name_y}" := data_temp$YYY)
-    }
-  }
-  if(mode == "y"){
-    for(name in y){
-      name_x = paste0(name, "_stx")
-      name_y = paste0(name, "_sty")
-      name_x = weather2::sys_tld_GetColname({{name_x}}, data)
-      name_y = weather2::sys_tld_GetColname({{name_y}}, data)
-
-      data_temp = dplyr::select(data,
-                                x = {{x}},
-                                y = {{name}}) %>%
-        weather2:::calc_skewtx(x = x, y = y, name_as = "XXX", angle = angle) %>%
-        weather2:::calc_skewty(y = y, name_as = "YYY")
-
-      data = dplyr::mutate(data,
-                           "{name_x}" := data_temp$XXX,
-                           "{name_y}" := data_temp$YYY)
-    }
-  }
+  data = dplyr::mutate(data,
+                       "{name_x}" := data1$x2,
+                       "{name_y}" := data1$y2)
   return(data)
 }
-
-
 
 #' Calculate Skew-T plot x-coordinate
 #'
@@ -87,24 +59,23 @@ calc_skewt = function(data, x, y, mode = NULL, angle = 45){
 #' @keywords internal
 #'
 #' @examples
-calc_skewtx = function(data, x, y, name_as = NULL, angle = 45){
+#'
+#'
+calc_skewtx = function(data, x, y, angle, name_as = NULL){
   if(is.null(name_as)){
     name_as = paste0(weather2:::sys_hp_sym2chr({{y}}), "_stx")
     name_as = weather2::sys_tld_GetColname({{name_as}}, data)
   }
-
-  angle = angle * pi / 180
-
   data1 = dplyr::select(data,
                         x = {{x}},
-                        y = {{y}}) %>%
+                        y = {{y}},
+                        a = {{angle}}) %>%
     weather2:::calc_skewty(y, name_as = "YYY") %>%
-    dplyr::mutate(angle = angle,
-                  XXX = tan(angle) * YYY + x * 0.05)
+    dplyr::mutate(a = a * pi / 180,
+                  XXX = (tan(a) * YYY + x * 0.05 - 1))
 
   data = dplyr::mutate(data,
                        "{name_as}" := data1$XXX)
-  #x = tan(angle) * weather2::calc_skewty(y) + x * 0.5
   return(data)
 }
 

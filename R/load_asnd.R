@@ -124,25 +124,6 @@ load_asnd = function(time = tool_datetime(end = Sys.time(), duration = "1 days",
   cli::cli_text("Info")
   cli::cli_alert_info("End Time: {Sys.time()}")
   cli::cli_alert_info("Total attemps: {attp_sum}")
-
-  data_final = list(data = data_final,
-                    unit = ifelse(frost == T,
-                      tibble::tibble(pres = "hPa", hght = "m",
-                                     temp = "C", dwpt = "C", frpt = "C",
-                                     relh = "%", reli = "%",
-                                     mixr = "gkg",
-                                     drct = "deg", sped = "kt",
-                                     thta = "K", thte = "K", thtv = "K",
-                                     uwnd = "kt", vwnd = "kt"),
-                      tibble::tibble(pres = "hPa", hght = "m",
-                                     temp = "C", dwpt = "C", frpt = "C",
-                                     relh = "%",
-                                     mixr = "gkg",
-                                     drct = "deg", sped = "kt",
-                                     thta = "K", thte = "K", thtv = "K",
-                                     uwnd = "kt", vwnd = "kt")),
-                    type = "sounding")
-  class(data_final) = "weather"
   return(data_final)
 }
 load_asnd(Sys.time())

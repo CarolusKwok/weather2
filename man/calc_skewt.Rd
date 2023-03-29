@@ -4,7 +4,7 @@
 \alias{calc_skewt}
 \title{Calculate Skew-T plot coordinates}
 \usage{
-calc_skewt(data, x, y, mode = NULL, angle = 45)
+calc_skewt(data, x, y, angle, name_as = NULL, overwrite = F)
 }
 \arguments{
 \item{angle}{}
