@@ -2,17 +2,9 @@
 % Please edit documentation in R/calc_adi.R
 \name{calc_isohume}
 \alias{calc_isohume}
-\title{Calculate the final temperature/ pressure by saturated mixing ratio}
+\title{Calculate the final temperature by saturated mixing ratio}
 \usage{
-calc_isohume(
-  data,
-  pres1,
-  temp1,
-  pres2,
-  temp2,
-  name_as = c("pres2", "temp2"),
-  overwrite = F
-)
+calc_isohume(data, pres1, temp1, pres2, name_as = "temp2", overwrite = F)
 }
 \arguments{
 \item{overwrite}{}
@@ -21,5 +13,5 @@ calc_isohume(
 
 }
 \description{
-Calculate the final temperature/ pressure by saturated mixing ratio
+Calculate the final temperature by saturated mixing ratio
 }

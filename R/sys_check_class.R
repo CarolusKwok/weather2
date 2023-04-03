@@ -216,4 +216,23 @@ sys_ckc_POSIXct = function(value, value_name, all = T, silent = F){
                          silent = silent)
 }
 
-
+#' System tool: Checks an object is a list
+#'
+#' A wrapper around `sys_ckc`. __Note that by default, `all` is set as `FALSE`__
+#'
+#' @param value Value of the object
+#' @param value_name Name of the object, in character
+#' @param all Should all the values be tested in a list/ vector? Default as True
+#' @param silent Should a text message be shown if the class of an object is incorrect? Default as False.
+#'
+#' @return
+#' @export
+#'
+#' @examples sys_ckc_list(list(c(1,2,3), c(3, 2, 1)), "obj")
+sys_ckc_list = function(value, value_name, all = F, silent = F){
+  weather2::sys_ckc(value = value,
+                    value_name = value_name,
+                    class = "list",
+                    all = all,
+                    silent = silent)
+}

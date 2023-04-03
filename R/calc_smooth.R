@@ -4,27 +4,21 @@
 #' @param based A column within dataframe. This column must be "numeric-able", must not contain NAs, and must be unique
 #' @param value A column within data. This column must contain NAs
 #' @param trailing Remove trailing NAs within the value if T
-#' @param name_as Name of the new smoothed column. Default as predict_xxx, where xxx is the column name of the based.
+#' @param name_as Name of the new smoothed column. Default as `NULL`, which returns value of `based` with the prefix of `"slm_"`. Accepts the keyword `"*del*"`
+#' @param overwrite Let the new column names to overwrite the original dataframe columns? Default as `FALSE`.
 #'
 #' @return
 #' @export
 #'
 #' @examples calc_smooth_lm(data, x, y, trailing = F)
-calc_smooth_lm = function(data, based, value, trailing = T, name_as = ""){
+calc_smooth_lm = function(data, based, value, trailing = T, name_as = NULL, overwrite = F){
   #Check ####
-  if(weather2::sys_ckc_dataframe(value = data, value_name = "data")){return(data)}
-  if(weather2::sys_ckd_colexist(value = {{based}}, value_name = "based", data = data, data_name = "data")){return(data)}
-  if(weather2::sys_ckd_colexist(value = {{value}}, value_name = "value", data = data, data_name = "data")){return(data)}
+  if(weather2::sys_ckf_CalcSmooth(data = data, based = {{based}}, value = {{value}})){return(data)}
   if(weather2::sys_ckc_logical(value = trailing, value_name = "trailing")){return(data)}
-  if(weather2::sys_ckc_character(value = name_as, value_name = "name_as")){return(data)}
-
-  data0 = dplyr::select(data, x = {{based}})$x
-  if(weather2::sys_ckl_hasNA(list = data0, list_name = "based")){return(data)}
-  if(weather2::sys_ckl_numericable(list = data0, list_name = "based")){return(data)}
-  if(weather2::sys_ckl_ItemUnique(list = data0, list_name = "based")){return(data)}
-
-  data0 = dplyr::select(data, x = {{value}})$x
-  if(weather2::sys_ckl_numericable(list = data0, list_name = "value")){return(data)}
+  if(!is.null(name_as)){
+    if(weather2::sys_ckc_character(value = name_as, value_name = "name_as")){return(data)}
+  }
+  if(weather2::sys_ckc_logical(overwrite, "overwrite")){return(data)}
 
   #Get text name ####
   name_based = colnames(dplyr::select(data, {{based}}))
@@ -59,10 +53,10 @@ calc_smooth_lm = function(data, based, value, trailing = T, name_as = ""){
   #find distinct, n replace the predict with NA if its a list of nas at the top n bottom
   if(length(unique(df_grp$groups)) == 1){
     lm = lm(formula = y~x, data = df_grp, singular.ok = T)
-    prediction = predict(object = lm, newdata = data0)
+    prediction = suppressWarnings(predict(object = lm, newdata = data0))
   } else {
     lm = lm(formula = y~x * groups, data = df_grp, singular.ok = T)
-    prediction = predict(object = lm, newdata = data0)
+    prediction = suppressWarnings(predict(object = lm, newdata = data0))
   }
 
   data0 = dplyr::mutate(data0,
@@ -85,12 +79,11 @@ calc_smooth_lm = function(data, based, value, trailing = T, name_as = ""){
     }
   }
   #return the smoothed data! first guess the appropriate column name
-  if(name_as == ""){
-    name_as = paste0("slm_", name_value)
-  }
-  expected_colname = weather2::sys_tld_GetColname(value = {{name_as}}, data = data)
-  data = dplyr::mutate(data, "{expected_colname}" := data0$predict)
-
+  if(is.null(name_as)){name_as = paste0("slm_", name_value)}
+  data = weather2::sys_tld_FormatReturn(data,
+                                        name_as,
+                                        list(data0$predict),
+                                        overwrite = overwrite)
   return(data)
 }
 
@@ -113,21 +106,10 @@ calc_smooth_lm = function(data, based, value, trailing = T, name_as = ""){
 #' @examples calc_smooth_ma(data, x, y, weight = 7)
 calc_smooth_ma = function(data, based, value, type = "center", weight = 3, name_as = "", NAs = T){
   #Check ####
-  if(weather2::sys_ckc_dataframe(value = data, value_name = "data")){return(data)}
-  if(weather2::sys_ckd_colexist(value = {{based}}, value_name = "based", data = data, data_name = "data")){return(data)}
-  if(weather2::sys_ckd_colexist(value = {{value}}, value_name = "value", data = data, data_name = "data")){return(data)}
-  if(weather2::sys_ckc_character(value = type, value_name = "type")){return(data)}
+  if(weather2::sys_ckf_CalcSmooth(data = data, based = {{based}}, value = {{value}})){return(data)}
   if(weather2::sys_ckl_ItemIn(list = type, list_name = "type", expected = c("center", "top", "bottom"))){return(data)}
   if(weather2::sys_ckc_numeric(value = weight, value_name = "weight")){return(data)}
   if(weather2::sys_ckc_logical(value = NAs, value_name = "NAs")){return(data)}
-
-  data0 = dplyr::select(data, x = {{based}})$x
-  if(weather2::sys_ckl_hasNA(list = data0, list_name = "based")){return(data)}
-  if(weather2::sys_ckl_numericable(list = data0, list_name = "based")){return(data)}
-  if(weather2::sys_ckl_ItemUnique(list = data0, list_name = "based")){return(data)}
-
-  data0 = dplyr::select(data, x = {{value}})$x
-  if(weather2::sys_ckl_numericable(list = data0, list_name = "value")){return(data)}
 
   rows = nrow(data)
   if(length(weight) == 1){
@@ -228,19 +210,8 @@ calc_smooth_ma = function(data, based, value, type = "center", weight = 3, name_
 #' @examples calc_smooth_sp(data, x, y, df = 0.7*nrow(data), name_as = "")
 calc_smooth_sp = function(data, based, value, df, name_as = ""){
   #Check ####
-  if(weather2::sys_ckc_dataframe(value = data, value_name = "data")){return(data)}
-  if(weather2::sys_ckd_colexist(value = {{based}}, value_name = "based", data = data, data_name = "data")){return(data)}
-  if(weather2::sys_ckd_colexist(value = {{value}}, value_name = "value", data = data, data_name = "data")){return(data)}
+  if(weather2::sys_ckf_CalcSmooth(data = data, based = {{based}}, value = {{value}})){return(data)}
   if(weather2::sys_ckc_numeric(value = df, value_name = "df")){return(data)}
-
-  data0 = dplyr::select(data, x = {{based}})$x
-  if(weather2::sys_ckl_hasNA(list = data0, list_name = "based")){return(data)}
-  if(weather2::sys_ckl_numericable(list = data0, list_name = "based")){return(data)}
-  if(weather2::sys_ckl_ItemUnique(list = data0, list_name = "based")){return(data)}
-
-  data0 = dplyr::select(data, x = {{value}})$x
-  if(weather2::sys_ckl_hasNA(list = data0, list_name = "value")){return(data)}
-  if(weather2::sys_ckl_numericable(list = data0, list_name = "value")){return(data)}
 
   data0 = dplyr::select(data, x = {{based}}, y = {{value}}) %>% tidyr::drop_na()
   if(weather2::sys_ckl_NumericValue(list = df, list_name = "df", expected = nrow(data0), mode = "<=")){return(data)}

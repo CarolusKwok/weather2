@@ -2,7 +2,7 @@
 % Please edit documentation in R/calc_adi.R
 \name{calc_adi_wet}
 \alias{calc_adi_wet}
-\title{Calculate the final temperature/ pressure by wet adiabatic lapse rate}
+\title{Calculate the final temperature by wet adiabatic lapse rate}
 \usage{
 calc_adi_wet(
   data,
@@ -10,7 +10,7 @@ calc_adi_wet(
   temp1,
   pres2,
   acc = 1,
-  name_as = c("pres2", "temp2"),
+  name_as = "temp2",
   overwrite = F
 )
 }
@@ -21,5 +21,5 @@ calc_adi_wet(
 
 }
 \description{
-Calculate the final temperature/ pressure by wet adiabatic lapse rate
+Calculate the final temperature by wet adiabatic lapse rate
 }

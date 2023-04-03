@@ -13,7 +13,7 @@
 #'
 #' @examples load_asnd()
 
-load_asnd = function(time = tool_datetime(end = Sys.time(), duration = "1 days", by = "12 hours"), station = 45004, frost = T, attempt = 50){
+load_asnd = function(time = Sys.time(), station = 45004, frost = T, attempt = 50){
   #Create filter by frost #####
   filter_line = ifelse(frost == T,
                        "   PRES   HGHT   TEMP   DWPT   FRPT   RELH   RELI   MIXR   DRCT   SKNT   THTA   THTE   THTV",

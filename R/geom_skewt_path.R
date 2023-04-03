@@ -34,15 +34,12 @@ stat_skewt_path = function(mapping = NULL, data = NULL, geom = "path",
 StatSkewtPath = ggplot2::ggproto("StatSkewtPath", ggplot2::Stat,
                                  required_aes = c("x", "y","skew"),
                                  compute_group = function(data, scales){
-                                   grid = tibble::tibble(x = data$x,
-                                                         y = data$y,
-                                                         a = data$skew) %>%
-                                     weather2::calc_skewt(x = x,
-                                                          y = y,
-                                                          angle = a,
-                                                          name_as = c("x", "y"),
-                                                          overwrite = T) %>%
-                                     dplyr::select(x, y)
+                                   grid = weather2::calc_skewt(data = data,
+                                                               x = x,
+                                                               y = y,
+                                                               angle = skew,
+                                                               name_as = c("x", "y"),
+                                                               overwrite = T)
                                    return(grid)})
 
 

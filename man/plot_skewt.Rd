@@ -2,16 +2,32 @@
 % Please edit documentation in R/plot_skewt.R
 \name{plot_skewt}
 \alias{plot_skewt}
-\title{Draws the base plot of SkewT}
+\title{Draws the base plot of Skew-T log-P thermodynamic diagram}
 \usage{
-plot_skewt(data, pres, skew = 45, ...)
+plot_skewt(
+  data,
+  pres,
+  temp,
+  skew = 45,
+  plim = NULL,
+  pline = NULL,
+  tlim = NULL,
+  tline = NULL,
+  ...
+)
 }
 \arguments{
 \item{data}{Data frame itself}
 
 \item{pres}{Column name of pressure}
 
-\item{skew}{Skewness of the SkewT}
+\item{skew}{Skewness of the Skew-T}
+
+\item{plim}{Limit of the pressure scale. Default as \code{NULL}, which will automatically detect the maximum and minimum pressure provided in the dataframe.}
+
+\item{pline}{Values of the Isobars. Default as \code{NULL}, which will plot the isobars at 1000, 900 ... , 200, 100, 50, 25, and 10.}
+
+\item{tline}{Values of the Isotherms. Default as \code{NULL}, which will plot the isotherms automatically the range of the provided temperature profile, with some to spare.}
 
 \item{...}{Any other parameters to be past to \code{ggplot2::aes()}}
 }
@@ -19,5 +35,5 @@ plot_skewt(data, pres, skew = 45, ...)
 
 }
 \description{
-Draws the base plot of SkewT
+Draws the base plot of Skew-T log-P thermodynamic diagram
 }

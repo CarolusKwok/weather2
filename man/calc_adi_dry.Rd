@@ -2,17 +2,9 @@
 % Please edit documentation in R/calc_adi.R
 \name{calc_adi_dry}
 \alias{calc_adi_dry}
-\title{Calculate the final temperature/ pressure by dry adiabatic lapse rate}
+\title{Calculate the final temperature by dry adiabatic lapse rate}
 \usage{
-calc_adi_dry(
-  data,
-  pres1,
-  temp1,
-  pres2,
-  temp2,
-  name_as = c("pres2", "temp2"),
-  overwrite = F
-)
+calc_adi_dry(data, pres1, temp1, pres2, name_as = "temp2", overwrite = F)
 }
 \arguments{
 \item{overwrite}{}
@@ -21,5 +13,5 @@ calc_adi_dry(
 
 }
 \description{
-Calculate the final temperature/ pressure by dry adiabatic lapse rate
+Calculate the final temperature by dry adiabatic lapse rate
 }

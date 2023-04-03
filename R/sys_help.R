@@ -25,10 +25,30 @@ sys_hp_hasArg = function(value, value_name){
 
 #' System tool: Returns a string value from symbols
 #'
-#' @param value value
-#' @param value_name value_name
+#' @param x value
 #'
 #' @noRd
 #'
 #' @examples sys_hp_sym2chr(hiiiii)
-sys_hp_sym2chr = function(x){return(rlang::as_name(rlang::quo({{x}})))}
+sys_hp_sym2chr = function(x){
+  if(weather2:::sys_hp_hasArg({{x}}, "x")){return()}
+
+
+  return(rlang::as_name(rlang::quo({{x}})))
+}
+
+
+
+
+
+#' System tools: Review the data, and pass it on.
+#'
+#' @param x
+#'
+#' @noRd
+#'
+#' @examples sys_hp_review(x)
+sys_hp_review = function(x){
+  print(x)
+  return(x)
+}

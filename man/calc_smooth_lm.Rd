@@ -4,7 +4,7 @@
 \alias{calc_smooth_lm}
 \title{Calculate by smoothing and filling the columns, with linear models}
 \usage{
-calc_smooth_lm(data, based, value, trailing = T, name_as = "")
+calc_smooth_lm(data, based, value, trailing = T, name_as = NULL, overwrite = F)
 }
 \arguments{
 \item{data}{The Data frame}
@@ -15,7 +15,9 @@ calc_smooth_lm(data, based, value, trailing = T, name_as = "")
 
 \item{trailing}{Remove trailing NAs within the value if T}
 
-\item{name_as}{Name of the new smoothed column. Default as predict_xxx, where xxx is the column name of the based.}
+\item{name_as}{Name of the new smoothed column. Default as \code{NULL}, which returns value of \code{based} with the prefix of \code{"slm_"}. Accepts the keyword \code{"*del*"}}
+
+\item{overwrite}{Let the new column names to overwrite the original dataframe columns? Default as \code{FALSE}.}
 }
 \value{
 

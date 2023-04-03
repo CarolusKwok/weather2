@@ -4,12 +4,7 @@
 \alias{load_asnd}
 \title{Download atmospheric sounding data}
 \usage{
-load_asnd(
-  time = tool_datetime(end = Sys.time(), duration = "1 days", by = "12 hours"),
-  station = 45004,
-  frost = T,
-  attempt = 50
-)
+load_asnd(time = Sys.time(), station = 45004, frost = T, attempt = 50)
 }
 \arguments{
 \item{time}{A list of time. If said time does not have a sounding, it will try to adjust to the last sounding possible. Only accepts POSIXct.}

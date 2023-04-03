@@ -21,7 +21,7 @@
 stat_skewt_polygon = function(mapping = NULL, data = NULL, geom = "polygon",
                               position = "identity", na.rm = FALSE, show.legend = NA,
                               inherit.aes = TRUE, ...) {
-  ggplot2::layer(stat = , data = data, mapping = mapping, geom = geom,
+  ggplot2::layer(stat = StatSkewtPolygon, data = data, mapping = mapping, geom = geom,
                  position = position, show.legend = show.legend, inherit.aes = inherit.aes,
                  params = list(na.rm = na.rm, ...))
 }
@@ -33,15 +33,12 @@ stat_skewt_polygon = function(mapping = NULL, data = NULL, geom = "polygon",
 StatSkewtPolygon = ggplot2::ggproto("StatSkewtPolygon", ggplot2::Stat,
                                     required_aes = c("x", "y","skew"),
                                     compute_group = function(data, scales){
-                                      grid = tibble::tibble(x = data$x,
-                                                            y = data$y,
-                                                            a = data$skew) %>%
-                                        weather2::calc_skewt(x = x,
-                                                             y = y,
-                                                             angle = a,
-                                                             name_as = c("x", "y"),
-                                                             overwrite = T) %>%
-                                        dplyr::select(x, y)
+                                      grid = weather2::calc_skewt(data = data,
+                                                                  x = x,
+                                                                  y = y,
+                                                                  angle = skew,
+                                                                  name_as = c("x", "y"),
+                                                                  overwrite = T)
                                       return(grid)})
 
 #' Plot polygons on a Skew-t plot

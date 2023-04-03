@@ -1,6 +1,6 @@
-#' Compute point coordinates for Skew-T plot points
+#' Compute path coordinates for Emagram plot points
 #'
-#' The method for calculating the points via `weather2::geom_skewt_point`
+#' The method for calculating the points via `weather2::geom_ema_path`
 #'
 #' @param mapping Set of aesthetic mappings created by aes(). If specified and inherit.aes = TRUE (the default), it is combined with the default mapping at the top level of the plot. You must supply mapping if there is no plot mapping.
 #' @param data The data to be displayed in this layer. There are three options:
@@ -18,10 +18,10 @@
 #' @export
 #'
 #' @examples
-stat_skewt_point = function(mapping = NULL, data = NULL, geom = "point",
-                            position = "identity", na.rm = FALSE, show.legend = NA,
-                            inherit.aes = TRUE, ...) {
-  ggplot2::layer(stat = weather2::StatSkewtPoint, data = data, mapping = mapping, geom = geom,
+stat_ema_path = function(mapping = NULL, data = NULL, geom = "path",
+                           position = "identity", na.rm = FALSE, show.legend = NA,
+                           inherit.aes = TRUE, ...) {
+  ggplot2::layer(stat = weather2::StatEmaPath, data = data, mapping = mapping, geom = geom,
                  position = position, show.legend = show.legend, inherit.aes = inherit.aes,
                  params = list(na.rm = na.rm, ...))
 }
@@ -31,22 +31,22 @@ stat_skewt_point = function(mapping = NULL, data = NULL, geom = "point",
 #' @format NULL
 #' @usage NULL
 #' @export
-StatSkewtPoint = ggplot2::ggproto("StatSkewtPoint", ggplot2::Stat,
-                                    required_aes = c("x", "y","skew"),
-                                    compute_group = function(data, scales){
-                                      grid = weather2::calc_skewt(data = data,
-                                                                  x = x,
-                                                                  y = y,
-                                                                  angle = skew,
-                                                                  name_as = c("x", "y"),
-                                                                  overwrite = T)
-                                      return(grid)})
+StatEmaPath = ggplot2::ggproto("StatEmaPath", ggplot2::Stat,
+                                 required_aes = c("x", "y"),
+                                 compute_group = function(data, scales){
+                                   grid = weather2::calc_ema(data = data,
+                                                               x = x,
+                                                               y = y,
+                                                               name_as = c("x", "y"),
+                                                               overwrite = T)
+                                   return(grid)})
 
 
 
-#' Plot points on a Skew-t plot
+
+#' Plot paths on a Skew-t plot
 #'
-#' Plots points based on the `weather2::calc_skewt` function, on a Skew-T plot
+#' Plots paths based on the `weather2::calc_ema` function, on a Emagram plot
 #'
 #' @param mapping Set of aesthetic mappings created by aes(). If specified and inherit.aes = TRUE (the default), it is combined with the default mapping at the top level of the plot. You must supply mapping if there is no plot mapping.
 #' @param data The data to be displayed in this layer. There are three options:
@@ -63,10 +63,10 @@ StatSkewtPoint = ggplot2::ggproto("StatSkewtPoint", ggplot2::Stat,
 #' @export
 #'
 #' @examples
-geom_skewt_point = function(mapping = NULL, data = NULL,
-                            position = "identity", na.rm = FALSE,
-                            show.legend = NA, inherit.aes = TRUE, ...){
-  ggplot2::layer(stat = weather2::StatSkewtPoint, geom = ggplot2::GeomPoint,
+geom_ema_path = function(mapping = NULL, data = NULL,
+                           position = "identity", na.rm = FALSE,
+                           show.legend = NA, inherit.aes = TRUE, ...){
+  ggplot2::layer(stat = weather2::StatEmaPath, geom = ggplot2::GeomPath,
                  data = data, mapping = mapping, position = position,
                  show.legend = show.legend, inherit.aes = inherit.aes,
                  params = list(na.rm = na.rm, ...))

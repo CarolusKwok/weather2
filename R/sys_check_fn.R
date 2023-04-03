@@ -50,3 +50,32 @@ sys_ckf_SysLoadFileset = function(data, title, attempt, worker, list_fail, thres
   if(weather2::sys_ckc_numeric(value = threshold, value_name = "threshold")){return(T)}
   return(F)
 }
+
+
+
+
+#' System tool: Check if the input satisfy the `calc_smooth_` requirements
+#'
+#' @param data The dataframe to be smoothened
+#' @param based The column name of the explanatory variable
+#' @param value The column name of the response variable
+#'
+#' @return
+#' @export
+#'
+#' @examples
+sys_ckf_CalcSmooth = function(data, based, value){
+  if(weather2::sys_ckc_dataframe(value = data, value_name = "data")){return(T)}
+  if(weather2::sys_ckd_colexist(value = {{based}}, value_name = "based", data = data, data_name = "data")){return(T)}
+  if(weather2::sys_ckd_colexist(value = {{value}}, value_name = "value", data = data, data_name = "data")){return(T)}
+
+  data0 = dplyr::select(data, x = {{based}})$x
+  if(weather2::sys_ckl_hasNA(list = data0, list_name = "based", mode = "exclude")){return(T)}
+  if(weather2::sys_ckl_numericable(list = data0, list_name = "based")){return(T)}
+  if(weather2::sys_ckl_ItemUnique(list = data0, list_name = "based")){return(T)}
+
+  data0 = dplyr::select(data, x = {{value}})$x
+  if(weather2::sys_ckl_hasNA(list = data0, list_name = "based", mode = "include")){return(T)}
+  if(weather2::sys_ckl_numericable(list = data0, list_name = "value")){return(T)}
+  return(F)
+}
