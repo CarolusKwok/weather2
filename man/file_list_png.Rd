@@ -11,9 +11,6 @@ file_list_png(dir, subdirectory = T)
 
 \item{subdirectory}{Include subdirectory or not}
 }
-\value{
-
-}
 \description{
 List a list of *.png files within a directory (and it's subdirectory)
 }

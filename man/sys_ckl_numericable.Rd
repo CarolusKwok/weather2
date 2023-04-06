@@ -13,9 +13,6 @@ sys_ckl_numericable(list, list_name, silent = F)
 
 \item{silent}{Should a text message be shown if incorrect? Default as False.}
 }
-\value{
-
-}
 \description{
 System tool: Check if a list can be turned into a numeric
 }

@@ -9,9 +9,6 @@ file_info(file)
 \arguments{
 \item{file}{list of file paths}
 }
-\value{
-
-}
 \description{
 Basically a wrapper for base::file.info
 }

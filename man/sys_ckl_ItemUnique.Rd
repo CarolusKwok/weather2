@@ -19,9 +19,6 @@ sys_ckl_ItemUnique(list, list_name, mode = "all unique", silent = F)
 
 \item{silent}{Should a text message be shown if incorrect? Default as False.}
 }
-\value{
-
-}
 \description{
 System tool: Check if items in list are unique or common
 }

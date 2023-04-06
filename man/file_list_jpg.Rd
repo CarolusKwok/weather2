@@ -11,9 +11,6 @@ file_list_jpg(dir, subdirectory = T)
 
 \item{subdirectory}{Include subdirectory or not}
 }
-\value{
-
-}
 \description{
 List a list of .jpg (and other common extensions) files within a directory (and it's subdirectory)
 }

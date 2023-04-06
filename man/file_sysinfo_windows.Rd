@@ -6,9 +6,6 @@
 \usage{
 file_sysinfo_windows()
 }
-\value{
-
-}
 \description{
 Get the Size and FreeSpace of Windows machine
 }

@@ -19,9 +19,6 @@ draw_rose(data, drct, value, sum, breaks = 45, minor_breaks)
 
 \item{minor_breaks}{Interval between each minor break. Default as half of "breaks".}
 }
-\value{
-
-}
 \description{
 Plot rose graph
 }

@@ -17,11 +17,11 @@ sys_ckf_SysLoadFileset(data, title, attempt, worker, list_fail, threshold)
 
 \item{list_fail}{List failed-to-download items}
 
-\item{threshold}{Threshold of file size, when compared to the largest item to be installed in the list}
-}
-\value{
-
+\item{threshold}{Threshold of line size. Any downloaded lines with number less than the threshold will be considered as failure and will be reattempted.}
 }
 \description{
 System tool: Check if the input satisfy the sys_load_fileset requirements
+}
+\examples{
+sys_ckf_SysLoadFileset(data, "title", 5L, 20L, TRUE, 1)
 }

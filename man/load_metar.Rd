@@ -24,9 +24,6 @@ load_metar(
 
 \item{CAVOK}{If decode is T, supress CAVOK and convert all CAVOK into vsby = 9999. Default as T}
 }
-\value{
-
-}
 \description{
 Meteorological Aviation Report, or METAR, are weather reports issued at airports for aviators.
 These reports have a high temporal resolution, updating at least once per hour.

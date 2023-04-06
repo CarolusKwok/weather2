@@ -11,9 +11,6 @@ obj_split(obj, by)
 
 \item{by}{parameter in question, accepts "station", "time", "type"}
 }
-\value{
-
-}
 \description{
 weather2 object - split a weather2 object by parameter
 }

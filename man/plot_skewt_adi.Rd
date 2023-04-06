@@ -35,9 +35,6 @@ plot_skewt_adi(
 
 \item{color}{Color of the lines, ordered as dry adiabatic line, wet adiabatic line, and isohume. Default as \code{c()}}
 }
-\value{
-
-}
 \description{
 Draws the adiabatic line of Skew-T log-P thermodynamic diagram
 }

@@ -9,9 +9,6 @@ obj_make(data)
 \arguments{
 \item{data}{data, in a dataframe, with columns "station", "time", "type", and "value"}
 }
-\value{
-
-}
 \description{
 weather2 object - create a weather2 object using data
 }

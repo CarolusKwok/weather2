@@ -2,34 +2,34 @@
 % Please edit documentation in R/calc_lcl.R
 \name{calc_lcl}
 \alias{calc_lcl}
-\title{Calculate the final temperature and pressure of Lifting Condensation Level, with high accurary}
+\title{Calculate the final temperature and pressure of Lifting Condensation Level, with high accuracy}
 \usage{
-calc_lcl(
-  data,
-  pres,
-  temp,
-  dwpt,
-  acc = 5,
-  name_as = c("lclp", "lclt_t", "lclt_d"),
-  overwrite = F
-)
+calc_lcl(data, pres, temp, dwpt, acc = 5L, name_as = NULL, overwrite = F)
 }
 \arguments{
-\item{data}{The dataframe itself. Each row of data will be considered as an observation for each calculation}
+\item{data}{The dataframe itself. Each row of data will be considered as an observation for each calculation.}
 
-\item{pres}{The column name of the initial pressure of the calculation. In any units.}
+\item{pres}{The column name of the air parcel pressure level. Unit in \code{hPa}.}
 
-\item{temp}{The column name of the initial temperature of the calculation. Unit in \code{degC}.}
+\item{temp}{The column name of the air parcel temperature. Unit in \code{degC}.}
 
-\item{dwpt}{The column name of the initial dewpoint of the calculation. Unit in \code{degC}.}
+\item{dwpt}{The column name of the air parcel dewpoint. Unit in \code{degC}.}
 
-\item{name_as}{Names of the 3 new columns, in the order of "pressure of the LCL", "temperature of the LCL(estimated by temperature)", and "temperature of the LCL(estimated by dewpoint)". Default as \code{c("lclp", "lclt_t", "lclt_d")}. Keyword \code{"*del*"} is supported.}
+\item{acc}{The accuracy of the calculation. Unit in \verb{decimal places}, as an integer. Default as \code{5L}.}
+
+\item{name_as}{Names of the 3 new columns, in the order of "pressure of the LCL", "temperature of the LCL(estimated by temperature)", and "temperature of the LCL(estimated by dewpoint)". Default as \code{NULL}, i.e. the column names of \code{pres}, \code{temp}, and \code{dwpt}, with a prefix of \code{lcl}. Keyword \code{"*del*"} is supported.}
 
 \item{overwrite}{Let the new column names to overwrite the original dataframe columns? Default as \code{FALSE}.}
 }
 \value{
-
+The same dataframe as \code{data}, with 3 additional column with column name defined in \code{name_as}.
 }
 \description{
-Calculate the final temperature and pressure of Lifting Condensation Level, with high accurary
+Lifting Condensation Level (lcl) refers to the pressure level where relative humidity of an air parcel will reach 100\% with respect to liquid water when it's cooled by dry adiabatic lifting, i.e. only due to buoyancy of the air parcel.
+}
+\details{
+Understanding lcl is crucial in meteorology, as this shows where clouds/ fog may start to form. This formula calculates the lcl of an air parcel, given its pressure (\code{pres}), temperature (\code{temp}) and dew point (\code{dwpt}) are known. Unlike \code{calc_lcl_est}, this function provides high/ controllable accuracy with \code{acc}. In general, a \code{acc} of \code{10L} or above will provide the exact lcl pressure and temperature values.
+}
+\examples{
+calc_lcl(tibble::tibble(pres = 1000, temp = 20, dwpt = 10), pres, temp, dwpt)
 }

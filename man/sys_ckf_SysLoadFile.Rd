@@ -19,9 +19,6 @@ sys_ckf_SysLoadFile(data, title, attempt, worker, list_fail, threshold)
 
 \item{threshold}{Threshold of file size, when compared to the largest item to be installed in the list}
 }
-\value{
-
-}
 \description{
 System tool: Check if the input satisfy the sys_load_file requirements
 }

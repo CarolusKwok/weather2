@@ -13,9 +13,6 @@ tool_datetime_select(time, by, value)
 
 \item{value}{Value of time selected by "by". Can be a vector.}
 }
-\value{
-
-}
 \description{
 Tool: To select date time by a value
 }

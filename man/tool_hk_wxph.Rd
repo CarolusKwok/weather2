@@ -6,9 +6,6 @@
 \usage{
 tool_hk_wxph()
 }
-\value{
-
-}
 \description{
 Tool: Provide dictionary of HKO' weather camera station code
 }

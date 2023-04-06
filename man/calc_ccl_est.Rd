@@ -29,9 +29,6 @@ calc_ccl_est(
 
 \item{overwrite}{Let the new column names to overwrite the original dataframe columns? Default as \code{FALSE}.}
 }
-\value{
-
-}
 \description{
 The Convective Condensation Level, or \strong{CCL}, refers to "the height (or pressure) where an air parcel becomes saturated when heated from below and lifted adiabatically due to buoyancy.". Or, in other words, CCL is when the isohume of an air parcel intersects with temperature profile of a sounding.
 Typically, CCL is only used for air parcels from the surface, as the pressure level of CCL must be less than the starting surface in order to cool adiabatically. However, for this calculator, CCL is calculated as the closest pressure level that the corresponding isohume intersects with the temperature profile, allowing for multi-level calculation of CCL.

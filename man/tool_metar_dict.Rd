@@ -9,9 +9,6 @@ tool_metar_dict(type = "weather")
 \arguments{
 \item{type}{Type of dictionary to provide. Only accepts "weather" or "cloud", and only 1 input.}
 }
-\value{
-
-}
 \description{
 Tool: Provide dictionary of commonly used METAR abbreviation/ codes
 }

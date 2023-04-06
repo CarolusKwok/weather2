@@ -4,22 +4,30 @@
 \alias{calc_adi_wet}
 \title{Calculate the final temperature by wet adiabatic lapse rate}
 \usage{
-calc_adi_wet(
-  data,
-  pres1,
-  temp1,
-  pres2,
-  acc = 1,
-  name_as = "temp2",
-  overwrite = F
-)
+calc_adi_wet(data, pres1, temp1, pres2, acc = 1, name_as = NULL, overwrite = F)
 }
 \arguments{
-\item{overwrite}{}
+\item{data}{The dataframe itself. Each row of data will be considered as an observation for each calculation}
+
+\item{pres1}{The column name of the initial pressure level. Unit in \code{hPa}.}
+
+\item{temp1}{The column name of temperature at the initial pressure level. Unit in \code{degC}.}
+
+\item{pres2}{The column name of the final pressure level. Unit in \code{hPa}.}
+
+\item{acc}{Accuracy of the calculation, in the units of \code{hPa}. The smaller the value, the more iterations will be performed to increase the accurarcy of the final calculation.}
+
+\item{name_as}{Names of the 1 new columns, i.e. temperature at the final pressure level. Default as \code{NULL}, i.e. the column name of \code{temp1} with a suffix of \code{"2"}. Keyword \code{"*del*"} is supported.}
+
+\item{overwrite}{Let the new column names to overwrite the original dataframe columns? Default as \code{FALSE}.}
 }
 \value{
-
+The same dataframe as \code{data}, with 1 additional column with column name defined in \code{name_as}.
 }
 \description{
-Calculate the final temperature by wet adiabatic lapse rate
+The dry adiabatic lapse rate refers to the rate of \strong{wet} air parcel temperature decrease as pressure decreases. Typically, the dry adiabatic lapse rate is ~-5°C/km, though varies greatly as saturation pressure changes.
+This function calculates the final atmospheric temperature, via the difference of 2 pressure levels(\code{pres1}, \code{pres2}).
+}
+\examples{
+calc_adi_dry(data, p1, t1, p2, name_as = "t2", overwrite = T)
 }

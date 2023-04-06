@@ -17,9 +17,6 @@ sys_ck_internet(
 
 \item{websites}{Website to test}
 }
-\value{
-
-}
 \description{
 System tool: Check if internet is connected
 }

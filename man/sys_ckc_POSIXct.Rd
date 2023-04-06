@@ -17,9 +17,6 @@ sys_ckc_POSIXct(value, value_name, all = T, silent = F)
 
 \item{class}{Expected class of an object, in character and can be a vector.}
 }
-\value{
-
-}
 \description{
 A wrapper around \code{sys_ckc}
 }

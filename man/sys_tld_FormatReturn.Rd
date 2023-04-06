@@ -20,9 +20,6 @@ sys_tld_FormatReturn(data, name_as, value, overwrite = F)
 
 \item{overwrite}{Let the new column names to overwrite the original dataframe columns? Default as \code{FALSE}.}
 }
-\value{
-
-}
 \description{
 The special keyword \code{"*del*"} allows user to not add specific columns into the returned dataframe, even if the column is calculated.
 }

@@ -25,9 +25,6 @@ sys_ckl_NumericValue(list, list_name, expected, mode = "==", silent = F)
 
 \item{silent}{Should a text message be shown if incorrect? Default as \code{False}.}
 }
-\value{
-
-}
 \description{
 System tool: Check if items in a numeric/integer list are of an expected value
 }

@@ -11,9 +11,6 @@ file_list_csv(dir, subdirectory = T)
 
 \item{subdirectory}{Include subdirectory or not}
 }
-\value{
-
-}
 \description{
 List a list of .csv files within a directory (and it's subdirectory)
 }

@@ -34,9 +34,6 @@ geom_skewt_polygon(
 
 \item{...}{Other arguments passed on to layer(). These are often aesthetics, used to set an aesthetic to a fixed value, like colour = "red" or size = 3. They may also be parameters to the paired geom/stat.}
 }
-\value{
-
-}
 \description{
 Plots polygons based on the \code{weather2::calc_skewt} function, on a Skew-T plot
 }

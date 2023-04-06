@@ -9,9 +9,6 @@ aes(...)
 \arguments{
 \item{...}{}
 }
-\value{
-
-}
 \description{
 A wrapper for \code{ggplot2::aes}
 }

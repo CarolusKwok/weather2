@@ -37,9 +37,6 @@ stat_tc_rose(
 
 \item{...}{Other arguments passed on to layer(). These are often aesthetics, used to set an aesthetic to a fixed value, like colour = "red" or size = 3. They may also be parameters to the paired geom/stat.}
 }
-\value{
-
-}
 \description{
 The method for calculating the storm rose via \code{weather2::geom_tc_rose}
 }

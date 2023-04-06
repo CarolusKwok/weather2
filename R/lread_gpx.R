@@ -6,8 +6,8 @@
 #' @return
 #' @export
 #'
-#' @examples read_gpx(choose.file(), read_time = T)
-read_gpx = function(file, read_time = T){
+#' @examples lread_gpx(choose.file(), read_time = T)
+lread_gpx = function(file, read_time = T){
   #Preset function ####
   read_gpx_internal = function(file, read_time){
     gpx_parsed = XML::htmlTreeParse(file = file, useInternalNodes = T)

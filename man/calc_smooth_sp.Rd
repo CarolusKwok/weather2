@@ -4,24 +4,27 @@
 \alias{calc_smooth_sp}
 \title{Calculate by smoothing the column, by smoothing spline}
 \usage{
-calc_smooth_sp(data, based, value, df, name_as = "")
+calc_smooth_sp(data, based, value, df, name_as = NULL, overwrite = F)
 }
 \arguments{
-\item{data}{The Data frame}
+\item{data}{The dataframe itself, storing all observations.}
 
-\item{based}{A column within dataframe. This column must be "numeric-able", must not contain NAs, and must be unique}
+\item{based}{The column name of how the data should be arranged, in ascending order. This column must not contain NAs, must be unique, and must be "numericable".}
 
-\item{value}{A column within data}
+\item{value}{The column name of what values should be smoothed. This column must contain NAs.}
 
-\item{df}{Degree of freedom. Must be between 1 and the number of rows in data (rows with NA values excluded)}
+\item{df}{Degree of freedom for smoothing. Must be between 1 and the number of rows in data (rows with NA values excluded)}
 
-\item{name_as}{Name of the new smoothed column. Default as predict_xxx, where xxx is the column name of the based.}
+\item{name_as}{Names of the 1 new columns, i.e. the newly smoothed data. Default as \code{NULL}, i.e. the column name of \code{value} with a prefix of \code{"ssp_"}. Keyword \code{"*del*"} is supported.}
+
+\item{overwrite}{Let the new column names to overwrite the original dataframe columns? Default as \code{FALSE}.}
 }
 \value{
-
+The same dataframe as \code{data}, with 1 additional column with column name defined in \code{name_as}.
 }
 \description{
-Calculate by smoothing the column, by smoothing spline
+Data smoothing is an important process in data analysis to fill up missing data, or to remove extreme values.
+This function fills up missing data using cubic splines, a special function defined piecewise by polynomials. Splines keeps the general shape of the model, but allows for smoothed curves within the data. The smoothness of the data can be controlled by \code{df}, or how many control points is present within the smooth.
 }
 \examples{
 calc_smooth_sp(data, x, y, df = 0.7*nrow(data), name_as = "")

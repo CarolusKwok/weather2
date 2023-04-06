@@ -9,9 +9,6 @@ calc_skewt(data, x, y, angle, name_as = NULL, overwrite = F)
 \arguments{
 \item{angle}{}
 }
-\value{
-
-}
 \description{
 Calculate Skew-T plot coordinates
 }

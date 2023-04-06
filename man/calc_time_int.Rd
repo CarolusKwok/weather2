@@ -17,9 +17,6 @@ calc_time_int(data, time, type = "before", unit = "minute", name_as)
 
 \item{name_as}{Column name of the time interval. If not provided, default as time with suffix "_int".}
 }
-\value{
-
-}
 \description{
 Calculate time interval, between previous or next row
 }

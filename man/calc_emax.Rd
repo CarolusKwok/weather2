@@ -12,8 +12,4 @@ calc_emax(data, x, name_as = NULL)
 \description{
 Calculate Emagram plot x-coordinate
 }
-\examples{
-
-
-}
 \keyword{internal}

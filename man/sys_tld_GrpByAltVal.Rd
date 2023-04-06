@@ -15,9 +15,6 @@ sys_tld_GrpByAltVal(data, col, name_as = "grp", overwrite = F)
 
 \item{overwrite}{Let the new column names to overwrite the original dataframe columns? Default as \code{FALSE}.}
 }
-\value{
-
-}
 \description{
 In ascending order of row number, a sudden shift in value of the selected column will add the group number by 1.
 The group number will always start at 1.

@@ -6,9 +6,6 @@
 \usage{
 tool_asnd_dict()
 }
-\value{
-
-}
 \description{
 Tool: Provide dictionary of commonly used sounding index abbreviation/ codes
 }

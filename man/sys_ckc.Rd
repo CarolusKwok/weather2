@@ -17,9 +17,6 @@ sys_ckc(value, value_name, class, all = T, silent = F)
 
 \item{silent}{Should a text message be shown if the class of an object is incorrect? Default as False.}
 }
-\value{
-
-}
 \description{
 System tool: Checks the class of an object
 }

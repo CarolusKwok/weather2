@@ -21,9 +21,6 @@ sys_ckl_ItemIn(list, list_name, expected, mode = "in", silent = F)
 
 \item{silent}{Should a text message be shown if incorrect? Default as False.}
 }
-\value{
-
-}
 \description{
 System tool: Check if items in a list are in/ not in some expected value
 }

@@ -20,9 +20,6 @@ tool_date(
 
 \item{duration}{Duration between starting time and ending time. Must be a string. Overrides when both start and end is supplied.}
 }
-\value{
-
-}
 \description{
 Tool: To create a sequence of date
 }

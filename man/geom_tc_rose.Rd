@@ -34,9 +34,6 @@ geom_tc_rose(
 
 \item{...}{Other arguments passed on to layer(). These are often aesthetics, used to set an aesthetic to a fixed value, like colour = "red" or size = 3. They may also be parameters to the paired geom/stat.}
 }
-\value{
-
-}
 \description{
 Plots the wind rose based on the NE, SE, SW, NW radius of wind strength, defined by \code{rne}, \code{rse}, \code{rsw}, \code{rnw}. Units as meter.
 }

@@ -1,47 +1,49 @@
 #' Calculate by smoothing and filling the columns, with linear models
 #'
-#' @param data The Data frame
-#' @param based A column within dataframe. This column must be "numeric-able", must not contain NAs, and must be unique
-#' @param value A column within data. This column must contain NAs
-#' @param trailing Remove trailing NAs within the value if T
-#' @param name_as Name of the new smoothed column. Default as `NULL`, which returns value of `based` with the prefix of `"slm_"`. Accepts the keyword `"*del*"`
+#' Data smoothing is an important process in data analysis to fill up missing data, or to remove extreme values.
+#' This function fills up missing data with linear model, predicted by the head and tail of the gap.
+#'
+#' @param data The dataframe itself, storing all observations.
+#' @param based The column name of how the data should be arranged, in ascending order. This column must not contain NAs, must be unique, and must be "numericable".
+#' @param value The column name of what values should be smoothed. This column must contain NAs.
+#' @param trailing Remove all NAs at the head of prediction column? Default as `TRUE`.
+#' @param name_as Names of the 1 new columns, i.e. the newly smoothed data. Default as `NULL`, i.e. the column name of `value` with a prefix of `"slm_"`. Keyword `"*del*"` is supported.
 #' @param overwrite Let the new column names to overwrite the original dataframe columns? Default as `FALSE`.
 #'
-#' @return
+#' @return The same dataframe as `data`, with 1 additional column with column name defined in `name_as`.
 #' @export
 #'
 #' @examples calc_smooth_lm(data, x, y, trailing = F)
 calc_smooth_lm = function(data, based, value, trailing = T, name_as = NULL, overwrite = F){
   #Check ####
-  if(weather2::sys_ckf_CalcSmooth(data = data, based = {{based}}, value = {{value}})){return(data)}
-  if(weather2::sys_ckc_logical(value = trailing, value_name = "trailing")){return(data)}
-  if(!is.null(name_as)){
-    if(weather2::sys_ckc_character(value = name_as, value_name = "name_as")){return(data)}
-  }
-  if(weather2::sys_ckc_logical(overwrite, "overwrite")){return(data)}
+  if(weather2::sys_ckf_CalcSmooth(data = data, based = {{based}}, value = {{value}})){return()}
+  if(weather2::sys_ckc_logical(value = trailing, value_name = "trailing")){return()}
+
+  if(is.null(name_as)){name_as = paste0("slm_", weather2:::sys_hp_sym2chr({{value}}))}
+  if(weather2::sys_ckf_NameAsReturn(name_as = name_as,
+                                    overwrite = overwrite,
+                                    expected = 1L)){return()}
 
   #Get text name ####
-  name_based = colnames(dplyr::select(data, {{based}}))
-  name_value = colnames(dplyr::select(data, {{value}}))
+  name_based = weather2:::sys_hp_sym2chr({{based}})
+  name_value = weather2:::sys_hp_sym2chr({{value}})
 
   #arrange data by x so data makes sense
   #select part of the data, convert based into x and value into y for easier processing.
-  data = dplyr::arrange(data, {{based}})
-  data0 = dplyr::select(data, x = {{based}}, y = {{value}})
-
   #mutate to give row number and list nas
-  data0 = dplyr::mutate(data0 ,
-                        row = 1:dplyr::n(),
-                        nas = is.na(y))
+  data = dplyr::arrange(data, {{based}})
+  data0 = dplyr::select(data, x = {{based}}, y = {{value}}) %>%
+    dplyr::mutate(row = 1:dplyr::n(),
+                  nas = is.na(y))
 
   #filter the nas, get the row number, and get the rows 1 above and 1 behind it, and give them a group
-  ls_grp = dplyr::filter(data0, nas == T)$row
+  ls_grp = dplyr::filter(data0, nas)$row
   ls_grp = unique(c(ls_grp, (ls_grp+1), (ls_grp-1)))
   df_grp = dplyr::filter(data0,
                          row %in% ls_grp) %>%
     dplyr::bind_rows(.,.) %>%
     dplyr::arrange(x) %>%
-    dplyr::filter(nas == F) %>%
+    dplyr::filter(!nas) %>%
     dplyr::slice(2:(dplyr::n()-1)) %>%
     dplyr::mutate(groups = as.factor(ceiling((1:dplyr::n())/2)))
 
@@ -79,7 +81,6 @@ calc_smooth_lm = function(data, based, value, trailing = T, name_as = NULL, over
     }
   }
   #return the smoothed data! first guess the appropriate column name
-  if(is.null(name_as)){name_as = paste0("slm_", name_value)}
   data = weather2::sys_tld_FormatReturn(data,
                                         name_as,
                                         list(data0$predict),
@@ -87,29 +88,36 @@ calc_smooth_lm = function(data, based, value, trailing = T, name_as = NULL, over
   return(data)
 }
 
-
-
-
 #' Calculate by smoothing the column, by moving average
 #'
-#' @param data The Data frame
-#' @param based A column within dataframe. This column must be "numeric-able", must not contain NAs, and must be unique
-#' @param value A column within data
-#' @param type Accepts 1 string of "left", "center", or "right"
-#' @param weight Weighting or the size of the window as an integer
-#' @param name_as Name of the new smoothed column. Default as predict_xxx, where xxx is the column name of the based.
-#' @param NAs Removes NA in the smoothed column by treating missing data
+#' Data smoothing is an important process in data analysis to fill up missing data, or to remove extreme values.
+#' This function removes extreme values by calculating the (weighted) average within a moving window. The moving window is controlled by `type`, which has 3 choices representing the following scenarios (assuming your calculating the `n` row with a window size `s`) -
+#' *`"left"`: The window is at the left of the arranged table, i.e. the smoothed value will be the weighted average of `n` to `n+s`
+#' *`"center"`: The window is at the center of the arranged table, i.e. the smoothed value will be the weighted average of `n-(s/2)` to `n+(s/2)`
+#' *`"right"`: The window is at the right of the arranged table, i.e. the smoothed value will be the weighted average of `n-s` to `n`
 #'
-#' @return
+#' @param data The dataframe itself, storing all observations.
+#' @param based The column name of how the data should be arranged, in ascending order. This column must not contain NAs, must be unique, and must be "numericable".
+#' @param value The column name of what values should be smoothed. This column must contain NAs.
+#' @param type Type of smoothening performed by the window position, relative to the observation. Accepts 1 string of `"left"`, `"center"`, or `"right"`.
+#' @param weight Weighting of the window as a numerical vector or the size of the window as an numerical
+#' @param NAs Removes NA in the smoothed column by treating missing data.
+#' @param name_as Names of the 1 new columns, i.e. the newly smoothed data. Default as `NULL`, i.e. the column name of `value` with a prefix of `"sma_"`. Keyword `"*del*"` is supported.
+#' @param overwrite Let the new column names to overwrite the original dataframe columns? Default as `FALSE`.
+#'
+#' @return The same dataframe as `data`, with 1 additional column with column name defined in `name_as`.
 #' @export
 #'
 #' @examples calc_smooth_ma(data, x, y, weight = 7)
-calc_smooth_ma = function(data, based, value, type = "center", weight = 3, name_as = "", NAs = T){
+calc_smooth_ma = function(data, based, value, type = "center", weight = 3, NAs = T, name_as = NULL, overwrite = F){
   #Check ####
-  if(weather2::sys_ckf_CalcSmooth(data = data, based = {{based}}, value = {{value}})){return(data)}
-  if(weather2::sys_ckl_ItemIn(list = type, list_name = "type", expected = c("center", "top", "bottom"))){return(data)}
-  if(weather2::sys_ckc_numeric(value = weight, value_name = "weight")){return(data)}
-  if(weather2::sys_ckc_logical(value = NAs, value_name = "NAs")){return(data)}
+  if(weather2::sys_ckf_CalcSmooth(data = data, based = {{based}}, value = {{value}}, check_na = F)){return()}
+  if(weather2::sys_ckl_ItemIn(list = type, list_name = "type", expected = c("center", "top", "bottom"))){return()}
+  if(weather2::sys_ckc_numeric(value = weight, value_name = "weight")){return()}
+  if(weather2::sys_ckc_logical(value = NAs, value_name = "NAs")){return()}
+
+  if(is.null(name_as)){name_as = paste0("sma_", weather2:::sys_hp_sym2chr({{value}}))}
+  if(weather2::sys_ckf_NameAsReturn(name_as = name_as, overwrite = overwrite, expected = 1L)){return()}
 
   rows = nrow(data)
   if(length(weight) == 1){
@@ -187,9 +195,10 @@ calc_smooth_ma = function(data, based, value, type = "center", weight = 3, name_
   }
   data0 = dplyr::arrange(data0, x)
   #return the data ####
-  if(name_as == ""){name_as = paste0("predict_", colnames(dplyr::select(data, {{value}})))}
-  expected_colname = weather2::sys_tld_GetColname(value = name_as, data = data)
-  data = dplyr::mutate(data, "{expected_colname}" := data0$predict)
+  data = weather2::sys_tld_FormatReturn(data,
+                                        name_as = name_as,
+                                        value = list(data0$predict),
+                                        overwrite = overwrite)
   return(data)
 }
 
@@ -198,24 +207,31 @@ calc_smooth_ma = function(data, based, value, type = "center", weight = 3, name_
 
 #' Calculate by smoothing the column, by smoothing spline
 #'
-#' @param data The Data frame
-#' @param based A column within dataframe. This column must be "numeric-able", must not contain NAs, and must be unique
-#' @param value A column within data
-#' @param df Degree of freedom. Must be between 1 and the number of rows in data (rows with NA values excluded)
-#' @param name_as Name of the new smoothed column. Default as predict_xxx, where xxx is the column name of the based.
+#' Data smoothing is an important process in data analysis to fill up missing data, or to remove extreme values.
+#' This function fills up missing data using cubic splines, a special function defined piecewise by polynomials. Splines keeps the general shape of the model, but allows for smoothed curves within the data. The smoothness of the data can be controlled by `df`, or how many control points is present within the smooth.
 #'
-#' @return
+#' @param data The dataframe itself, storing all observations.
+#' @param based The column name of how the data should be arranged, in ascending order. This column must not contain NAs, must be unique, and must be "numericable".
+#' @param value The column name of what values should be smoothed. This column must contain NAs.
+#' @param df Degree of freedom for smoothing. Must be between 1 and the number of rows in data (rows with NA values excluded)
+#' @param name_as Names of the 1 new columns, i.e. the newly smoothed data. Default as `NULL`, i.e. the column name of `value` with a prefix of `"ssp_"`. Keyword `"*del*"` is supported.
+#' @param overwrite Let the new column names to overwrite the original dataframe columns? Default as `FALSE`.
+#'
+#' @return The same dataframe as `data`, with 1 additional column with column name defined in `name_as`.
 #' @export
 #'
-#' @examples calc_smooth_sp(data, x, y, df = 0.7*nrow(data), name_as = "")
-calc_smooth_sp = function(data, based, value, df, name_as = ""){
+#' @examples calc_smooth_sp(data, x, y, df = 0.7*nrow(data))
+calc_smooth_sp = function(data, based, value, df, name_as = NULL, overwrite = F){
   #Check ####
-  if(weather2::sys_ckf_CalcSmooth(data = data, based = {{based}}, value = {{value}})){return(data)}
-  if(weather2::sys_ckc_numeric(value = df, value_name = "df")){return(data)}
+  if(weather2::sys_ckf_CalcSmooth(data = data, based = {{based}}, value = {{value}})){return()}
+  if(weather2::sys_ckc_numeric(value = df, value_name = "df")){return()}
+
+  if(is.null(name_as)){name_as = paste0("ssp_", weather2:::sys_hp_sym2chr({{value}}))}
+  if(weather2::sys_ckf_NameAsReturn(name_as = name_as, overwrite = overwrite, expected = 1L)){return()}
 
   data0 = dplyr::select(data, x = {{based}}, y = {{value}}) %>% tidyr::drop_na()
-  if(weather2::sys_ckl_NumericValue(list = df, list_name = "df", expected = nrow(data0), mode = "<=")){return(data)}
-  if(weather2::sys_ckl_NumericValue(list = df, list_name = "df", expected = 1, mode = ">")){return(data)}
+  if(weather2::sys_ckl_NumericValue(list = df, list_name = "df", expected = nrow(data0), mode = "<=")){return()}
+  if(weather2::sys_ckl_NumericValue(list = df, list_name = "df", expected = 1, mode = ">")){return()}
 
   #Format the data and duplicate to data0 and data1 ####
   data = dplyr::arrange(data, {{based}})
@@ -233,8 +249,9 @@ calc_smooth_sp = function(data, based, value, df, name_as = ""){
                         predict = prediction)
 
   #Return data0 to data ####
-  if(name_as == ""){name_as = paste0("predict_", colnames(dplyr::select(data, {{value}})))}
-  expected_colname = weather2::sys_tld_GetColname(value = name_as, data = data)
-  data = dplyr::mutate(data, "{expected_colname}" := data0$predict)
+  data = weather2::sys_tld_FormatReturn(data = data,
+                                        name_as = name_as,
+                                        value = list(data0$predict),
+                                        overwrite = overwrite)
   return(data)
 }

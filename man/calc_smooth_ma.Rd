@@ -10,30 +10,37 @@ calc_smooth_ma(
   value,
   type = "center",
   weight = 3,
-  name_as = "",
-  NAs = T
+  NAs = T,
+  name_as = NULL,
+  overwrite = F
 )
 }
 \arguments{
-\item{data}{The Data frame}
+\item{data}{The dataframe itself, storing all observations.}
 
-\item{based}{A column within dataframe. This column must be "numeric-able", must not contain NAs, and must be unique}
+\item{based}{The column name of how the data should be arranged, in ascending order. This column must not contain NAs, must be unique, and must be "numericable".}
 
-\item{value}{A column within data}
+\item{value}{The column name of what values should be smoothed. This column must contain NAs.}
 
-\item{type}{Accepts 1 string of "left", "center", or "right"}
+\item{type}{Type of smoothening performed by the window position, relative to the observation. Accepts 1 string of \code{"left"}, \code{"center"}, or \code{"right"}.}
 
-\item{weight}{Weighting or the size of the window as an integer}
+\item{weight}{Weighting of the window as a numerical vector or the size of the window as an numerical}
 
-\item{name_as}{Name of the new smoothed column. Default as predict_xxx, where xxx is the column name of the based.}
+\item{NAs}{Removes NA in the smoothed column by treating missing data.}
 
-\item{NAs}{Removes NA in the smoothed column by treating missing data}
+\item{name_as}{Names of the 1 new columns, i.e. the newly smoothed data. Default as \code{NULL}, i.e. the column name of \code{value} with a prefix of \code{"sma_"}. Keyword \code{"*del*"} is supported.}
+
+\item{overwrite}{Let the new column names to overwrite the original dataframe columns? Default as \code{FALSE}.}
 }
 \value{
-
+The same dataframe as \code{data}, with 1 additional column with column name defined in \code{name_as}.
 }
 \description{
-Calculate by smoothing the column, by moving average
+Data smoothing is an important process in data analysis to fill up missing data, or to remove extreme values.
+This function removes extreme values by calculating the (weighted) average within a moving window. The moving window is controlled by \code{type}, which has 3 choices representing the following scenarios (assuming your calculating the \code{n} row with a window size \code{s}) -
+*\code{"left"}: The window is at the left of the arranged table, i.e. the smoothed value will be the weighted average of \code{n} to \code{n+s}
+*\code{"center"}: The window is at the center of the arranged table, i.e. the smoothed value will be the weighted average of \code{n-(s/2)} to \code{n+(s/2)}
+*\code{"right"}: The window is at the right of the arranged table, i.e. the smoothed value will be the weighted average of \code{n-s} to \code{n}
 }
 \examples{
 calc_smooth_ma(data, x, y, weight = 7)

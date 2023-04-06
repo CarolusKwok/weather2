@@ -12,8 +12,4 @@ calc_skewtx(data, x, y, angle, name_as = NULL)
 \description{
 Calculate Skew-T plot x-coordinate
 }
-\examples{
-
-
-}
 \keyword{internal}

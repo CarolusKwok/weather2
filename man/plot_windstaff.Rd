@@ -35,9 +35,6 @@ plot_windstaff(
 
 \item{...}{}
 }
-\value{
-
-}
 \description{
 Draws the base plot of a wind staff
 }

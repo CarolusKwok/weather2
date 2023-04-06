@@ -15,9 +15,6 @@ sys_ckc_list(value, value_name, all = F, silent = F)
 
 \item{silent}{Should a text message be shown if the class of an object is incorrect? Default as False.}
 }
-\value{
-
-}
 \description{
 A wrapper around \code{sys_ckc}. \strong{Note that by default, \code{all} is set as \code{FALSE}}
 }

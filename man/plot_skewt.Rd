@@ -31,9 +31,6 @@ plot_skewt(
 
 \item{...}{Any other parameters to be past to \code{ggplot2::aes()}}
 }
-\value{
-
-}
 \description{
 Draws the base plot of Skew-T log-P thermodynamic diagram
 }

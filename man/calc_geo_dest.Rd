@@ -41,9 +41,6 @@ calc_geo_dest(
 
 \item{b}{Minor semi-axes of the ellipsoid, i.e. mean diameter of the Earth's Prime Meridian. \strong{DO NOT CHANGE IF YOU DON'T KNOW WHAT YOU ARE DOING}}
 }
-\value{
-
-}
 \description{
 Using the Vincenty direct solution of geodesics on the ellipsoid.
 A R adaptation using https://www.movable-type.co.uk/scripts/latlong-vincenty.html code.

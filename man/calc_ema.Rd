@@ -9,9 +9,6 @@ calc_ema(data, x, y, name_as = NULL, overwrite = F)
 \arguments{
 \item{angle}{}
 }
-\value{
-
-}
 \description{
 Calculate Emagram plot coordinates
 }

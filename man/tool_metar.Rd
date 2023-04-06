@@ -13,9 +13,6 @@ tool_metar(data, code, CAVOK)
 
 \item{CAVOK}{If decode is T, supress CAVOK and convert all CAVOK into vsby = 9999. Default as T.}
 }
-\value{
-
-}
 \description{
 Tool: Decode METAR reports
 }

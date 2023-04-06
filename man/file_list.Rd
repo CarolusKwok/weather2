@@ -13,9 +13,6 @@ file_list(dir, pattern, subdirectory = T)
 
 \item{subdirectory}{Include subdirectory or not}
 }
-\value{
-
-}
 \description{
 List a list of files with a certain pattern, within a directory (and it's subdirectory)
 }

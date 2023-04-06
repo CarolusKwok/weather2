@@ -15,9 +15,6 @@ coord_radar(theta = "x", start = 0, direction = 1, ...)
 
 \item{...}{Other arguments to be passed to ggproto}
 }
-\value{
-
-}
 \description{
 Adds a radar coordinate system for radar charts. Inspired by see
 }

@@ -85,14 +85,11 @@ sys_load_filesetSEQ = function(data, title = "test_set_seq", attempt = 5, thresh
 
   #Start download process
   time_start = Sys.time()
-  cli::cli_text(cli::style_bold(cli::col_green("____________Initiate download process____________")))
-  cli::cli_text("Info")
-  cli::cli_alert_info("Downloading {.var {title}}")
-  cli::cli_alert_info("Start Time: {Sys.time()}")
-  cli::cli_alert_info("First File: {file_f}")
-  cli::cli_alert_info("Last  File: {file_n}")
-  cli::cli_alert_info("      Sets: {length(sets)}")
-  cli::cli_text(cli::style_bold(cli::col_grey("_________________________________________________")))
+  weather2:::sys_ldhp_panelstart(title = title,
+                                 time_start = time_start,
+                                 data_1 = file_f,
+                                 data_n = file_n,
+                                 data_num = length(sets))
 
   #Start download ####
   defaultW = getOption("warn")
@@ -136,26 +133,19 @@ sys_load_filesetSEQ = function(data, title = "test_set_seq", attempt = 5, thresh
   }
   options(warn = defaultW)
   #Return download process information ####
-  data = weather2:::sys_load_formatdata(data)
-  success = dplyr::select(data, DIR, Info, exist) %>%
-    dplyr::distinct() %>%
-    dplyr::filter(exist == T)
-  fail = dplyr::select(data, DIR, Info, exist) %>%
-    dplyr::distinct() %>%
-    dplyr::filter(exist == F)
+  data = weather2:::sys_load_formatdata(data) %>%
+    dplyr::select(DIR, Info, exist) %>%
+    dplyr::distinct()
+  success = dplyr::filter(data, exist == T)
+  fail    = dplyr::filter(data, exist == F)
   time_end = Sys.time()
-  time_diff= round(
-    as.numeric(
-      difftime(time_end, time_start, units = "secs")), digits = 3)
-  cli::cli_text(cli::style_bold(cli::col_red("________________Download complete________________")))
-  cli::cli_text("Info")
-  cli::cli_alert_info("  End Time: {Sys.time()}")
-  cli::cli_alert_info("  Eclipsed: {time_diff} sec")
-  cli::cli_alert_info("   Attempt: {attp_sum}")
-  cli::cli_alert_info("   Success: {nrow(success)}")
-  cli::cli_alert_info("      Fail: {nrow(fail)}")
-  if(list_fail){weather2:::sys_load_listfail(fail$Info)}
-  cli::cli_text("")
+  weather2:::sys_ldhp_panelend(time_start = time_start,
+                               time_end = time_end,
+                               attempts = attp_sum,
+                               success = nrow(success),
+                               fail = nrow(fail),
+                               list_fail = list_fail,
+                               list_of_fail = fail$Info)
 }
 
 
@@ -221,15 +211,12 @@ sys_load_filesetSTM = function(data, title = "test_set_stm", attempt = 5, worker
 
   #Start download process ####
   time_start = Sys.time()
-  cli::cli_text(cli::style_bold(cli::col_green("____________Initiate download process____________")))
-  cli::cli_text(cli::style_bold(cli::bg_br_yellow(cli::col_black("______________________STORM______________________"))))
-  cli::cli_text("Info")
-  cli::cli_alert_info("Downloading {.var {title}}")
-  cli::cli_alert_info("Start Time: {Sys.time()}")
-  cli::cli_alert_info("First File: {file_f}")
-  cli::cli_alert_info("Last  File: {file_n}")
-  cli::cli_alert_info("      Sets: {length(sets)}")
-  cli::cli_text(cli::style_bold(cli::col_grey("_________________________________________________")))
+  weather2:::sys_ldhp_panelstart(title = title,
+                                 time_start = time_start,
+                                 data_1 = file_f,
+                                 data_n = file_n,
+                                 data_num = length(sets),
+                                 storm = T)
 
   #Start download ####
   defaultW = getOption("warn")
@@ -260,25 +247,18 @@ sys_load_filesetSTM = function(data, title = "test_set_stm", attempt = 5, worker
   future::plan("future::sequential")
   options(warn = defaultW)
   #Return download process information ####
-  data = weather2:::sys_load_formatdata(data)
-  success = dplyr::select(data, DIR, Info, exist) %>%
-    dplyr::distinct() %>%
-    dplyr::filter(exist == T)
-  fail = dplyr::select(data, DIR, Info, exist) %>%
-    dplyr::distinct() %>%
-    dplyr::filter(exist == F)
+  data = weather2:::sys_load_formatdata(data) %>%
+    dplyr::select(DIR, Info, exist) %>%
+    dplyr::distinct()
+  success = dplyr::filter(data, exist == T)
+  fail    = dplyr::filter(data, exist == F)
   time_end = Sys.time()
-  time_diff= round(
-    as.numeric(
-      difftime(time_end, time_start, units = "secs")), digits = 3)
-  cli::cli_text(cli::style_bold(cli::col_red("________________Download complete________________")))
-  cli::cli_text("Info")
-  cli::cli_alert_info("End Time: {Sys.time()}")
-  cli::cli_alert_info("Eclipsed: {time_diff} sec")
-  cli::cli_alert_info(" Attempt: {attp_sum}")
-  cli::cli_alert_info(" Success: {nrow(success)}")
-  cli::cli_alert_info("    Fail: {nrow(fail)}")
-  if(list_fail){weather2:::sys_load_listfail(fail$Info)}
-  cli::cli_text("")
+  weather2:::sys_ldhp_panelend(time_start = time_start,
+                               time_end = time_end,
+                               attempts = attp_sum,
+                               success = nrow(success),
+                               fail = nrow(fail),
+                               list_fail = list_fail,
+                               list_of_fail = fail$Info)
 }
 

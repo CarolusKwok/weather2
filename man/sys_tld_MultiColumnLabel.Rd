@@ -15,9 +15,6 @@ sys_tld_MultiColumnLabel(data, ..., name_as = "label", overwrite = F)
 
 \item{overwrite}{Let the new column names to overwrite the original dataframe columns? Default as \code{FALSE}.}
 }
-\value{
-
-}
 \description{
 The columns of creating the label column will be passed from the \code{...} argument. Note that the \code{...} argument is not checked. Please make sure the columns are indeed present.
 }

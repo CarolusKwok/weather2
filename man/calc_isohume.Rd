@@ -2,16 +2,32 @@
 % Please edit documentation in R/calc_adi.R
 \name{calc_isohume}
 \alias{calc_isohume}
-\title{Calculate the final temperature by saturated mixing ratio}
+\title{Calculate the final temperature by isohume/ equal saturated mixing ratio}
 \usage{
-calc_isohume(data, pres1, temp1, pres2, name_as = "temp2", overwrite = F)
+calc_isohume(data, pres1, temp1, pres2, name_as = NULL, overwrite = F)
 }
 \arguments{
-\item{overwrite}{}
+\item{data}{The dataframe itself. Each row of data will be considered as an observation for each calculation.}
+
+\item{pres1}{The column name of the initial pressure level. Unit in \code{hPa}.}
+
+\item{temp1}{The column name of temperature at the initial pressure level. Unit in \code{degC}.}
+
+\item{pres2}{The column name of the final pressure level. Unit in \code{hPa}.}
+
+\item{name_as}{Names of the 1 new columns, i.e. temperature at the final pressure level. Default as \code{NULL}, i.e. the column name of \code{temp1} with a suffix of \code{"2"}. Keyword \code{"*del*"} is supported.}
+
+\item{overwrite}{Let the new column names to overwrite the original dataframe columns? Default as \code{FALSE}.}
 }
 \value{
-
+The same dataframe as \code{data}, with 1 additional column with column name defined in \code{name_as}.
 }
 \description{
-Calculate the final temperature by saturated mixing ratio
+Air parcels, at different temperature or pressures, can have different amount of saturated moisture content. Isohumes are lines connecting different locations with equal relative humidity, or in other words, same saturated mixing ratio.
+}
+\details{
+This function calculates the final atmospheric temperature, via the difference of 2 pressure levels(\code{pres1}, \code{pres2}), and assumes that the air parcel has the same mixing ratio.
+}
+\examples{
+calc_adi_dry(data, p1, t1, p2, name_as = "t2", overwrite = T)
 }

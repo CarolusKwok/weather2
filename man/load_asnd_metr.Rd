@@ -17,9 +17,6 @@ load_asnd_metr(
 
 \item{attempt}{Attempts of downloads to try per time. Default as 50.}
 }
-\value{
-
-}
 \description{
 Understanding the sounding is important for understanding the atmospheric condition, especially for extreme weather.
 This catches the metrics provided by the University of Wyoming.

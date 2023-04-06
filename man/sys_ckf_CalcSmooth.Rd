@@ -4,7 +4,7 @@
 \alias{sys_ckf_CalcSmooth}
 \title{System tool: Check if the input satisfy the \code{calc_smooth_} requirements}
 \usage{
-sys_ckf_CalcSmooth(data, based, value)
+sys_ckf_CalcSmooth(data, based, value, check_na = T)
 }
 \arguments{
 \item{data}{The dataframe to be smoothened}
@@ -12,9 +12,8 @@ sys_ckf_CalcSmooth(data, based, value)
 \item{based}{The column name of the explanatory variable}
 
 \item{value}{The column name of the response variable}
-}
-\value{
 
+\item{check_na}{Should NA values be excluded from the based and value column? Default as \code{TRUE}}
 }
 \description{
 System tool: Check if the input satisfy the \code{calc_smooth_} requirements
