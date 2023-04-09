@@ -10,41 +10,41 @@ calc_geo_dist(
   lat1,
   lon2,
   lat2,
-  name_as = c("brn1", "brn2", "dis", "error"),
-  overwrite = F,
-  write_error = F,
   acc = 1e-12,
   a = 6378137,
-  b = 6356752.314245
+  b = 6356752.314245,
+  name_as = NULL,
+  overwrite = F
 )
 }
 \arguments{
-\item{data}{The data}
+\item{data}{The dataframe itself.}
 
-\item{lon1}{The column name of the longitude of location 1 (in deg)}
+\item{lon1}{The column name of the longitude in location 1. Unit in \code{deg}.}
 
-\item{lat1}{The column name of the latitude of location 1 (in deg)}
+\item{lat1}{The column name of the latitude in location 1. Unit in \code{deg}.}
 
-\item{lon2}{The column name of the longitude of location 2 (in deg)}
+\item{lon2}{The column name of the longitude in location 2. Unit in \code{deg}.}
 
-\item{lat2}{The column name of the latitude of location2 (in deg)}
-
-\item{name_as}{The names of the new column name. Default as \code{c("brn1", "brn2", "dis", "error")}.}
-
-\item{overwrite}{Let the new column names to overwrite the original dataframe columns? Default as \code{FALSE}.}
-
-\item{write_error}{Do you write the \code{error} column showing the estimation error? Default as \code{FALSE}.}
+\item{lat2}{The column name of the latitude in location 2. Unit in \code{deg}.}
 
 \item{acc}{Minimum accuracy of the estimation. Default as \code{1e-12}.}
 
 \item{a}{Major semi-axes of the ellipsoid, i.e. mean diameter of the Earth's Equator. \strong{DO NOT CHANGE IF YOU DON'T KNOW WHAT YOU ARE DOING}}
 
 \item{b}{Minor semi-axes of the ellipsoid, i.e. mean diameter of the Earth's Prime Meridian. \strong{DO NOT CHANGE IF YOU DON'T KNOW WHAT YOU ARE DOING}}
+
+\item{name_as}{The names of the new column name. Default as \code{NULL}, i.e. \code{c("brn1", "brn2", "dis", "error")}. Keyword \code{"*del*"} is supported.}
+
+\item{overwrite}{Let the new column names to overwrite the original dataframe columns? Default as \code{FALSE}.}
+}
+\value{
+The same dataframe as \code{data}, with 4 additional column with column name defined in \code{name_as}.
 }
 \description{
 Using the Vincenty indirect solution of geodesics on the ellipsoid.
 A R adaptation using https://www.movable-type.co.uk/scripts/latlong-vincenty.html code.
 }
 \examples{
-calc_geo_dist(data = tibble::tibble(lon1 = 1:90, lat1 = 1:90, lon2 = 90:1, lat2 = 90:1), lon1, lat1, lon2, lat2, write_error = T)
+calc_geo_dist(data = tibble::tibble(lon1 = 1:90, lat1 = 1:90, lon2 = 90:1, lat2 = 90:1), lon1, lat1, lon2, lat2)
 }

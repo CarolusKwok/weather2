@@ -4,22 +4,35 @@
 \alias{calc_time_int}
 \title{Calculate time interval, between previous or next row}
 \usage{
-calc_time_int(data, time, type = "before", unit = "minute", name_as)
+calc_time_int(
+  data,
+  time,
+  type = "before",
+  unit = "minute",
+  name_as = NULL,
+  overwrite = F
+)
 }
 \arguments{
-\item{data}{Dataframe or Weather containing POSIXct time}
+\item{data}{The dataframe itself.}
 
-\item{time}{Column name of the time}
+\item{time}{The column name of time}
 
-\item{type}{Type of operation, accepts "before" or "after" only.}
+\item{type}{Type of operation, accepts \code{"before"} or \code{"after"} only.}
 
-\item{unit}{Unit of time interval. Default as "minute".}
+\item{unit}{Unit of time interval. Default as \code{"minute"}.}
 
-\item{name_as}{Column name of the time interval. If not provided, default as time with suffix "_int".}
+\item{name_as}{Names of the 1 new columns, i.e. time interval between the 2 rows. Default as \code{NULL}, i.e. the column name of \code{time} with a suffix of \code{"_int"}. Keyword \code{"*del*"} is supported.}
+
+\item{overwrite}{Let the new column names to overwrite the original dataframe columns? Default as \code{FALSE}.}
+}
+\value{
+The same dataframe as \code{data}, with 1 additional column with column name defined in \code{name_as}.
 }
 \description{
-Calculate time interval, between previous or next row
+This function arranges the data, ascendingly, and calculates the duration between 2 observations - either comparing 1 row before or 1 row after.
 }
 \examples{
-calc_time_int(data, time)
+data.frame(time = as.POSIXct(c("2023/01/01 12:00:00", "2022/12/01 12:00:00", "2022/11/01 12:00:00"))) \%>\%
+calc_time_int(time, type = "after")
 }

@@ -10,41 +10,41 @@ calc_geo_dest(
   lat1,
   brn1,
   dis,
-  name_as = c("lon2", "lat2", "brn2", "error"),
-  overwrite = F,
-  write_error = F,
   acc = 1e-12,
   a = 6378137,
-  b = 6356752.314245
+  b = 6356752.314245,
+  name_as = NULL,
+  overwrite = F
 )
 }
 \arguments{
-\item{data}{The data}
+\item{data}{The dataframe itself.}
 
-\item{lon1}{The column name of the longitude (in deg)}
+\item{lon1}{The column name of the longitude. Unit in \code{deg}.}
 
-\item{lat1}{The column name of the latitude (in deg)}
+\item{lat1}{The column name of the latitude. Unit in \code{deg}.}
 
-\item{brn1}{The column name of the bearning (in deg)}
+\item{brn1}{The column name of the bearing. Unit in \code{deg}.}
 
-\item{dis}{The column name of the distance (in m)}
+\item{dis}{The column name of the distance. Unit in \code{m}.}
 
-\item{name_as}{The names of the new column name. Default as \code{c("lon2", "lat2", "brn2", "error")}.}
-
-\item{overwrite}{Let the new column names to overwrite the original dataframe columns? Default as \code{FALSE}.}
-
-\item{write_error}{Do you write the \code{error} column showing the estimation error? Default as \code{FALSE}.}
-
-\item{acc}{Minimum accuracy of the estimation. Default as \code{1e-12}}
+\item{acc}{Minimum accuracy of the estimation. Default as \code{1e-12}. Unit in \code{deg}.}
 
 \item{a}{Major semi-axes of the ellipsoid, i.e. mean diameter of the Earth's Equator. \strong{DO NOT CHANGE IF YOU DON'T KNOW WHAT YOU ARE DOING}}
 
 \item{b}{Minor semi-axes of the ellipsoid, i.e. mean diameter of the Earth's Prime Meridian. \strong{DO NOT CHANGE IF YOU DON'T KNOW WHAT YOU ARE DOING}}
+
+\item{name_as}{The names of the new column name. Default as \code{NULL}, i.e. \code{c("lon2", "lat2", "brn2", "error")}. Keyword \code{"*del*"} is supported.}
+
+\item{overwrite}{Let the new column names to overwrite the original dataframe columns? Default as \code{FALSE}.}
+}
+\value{
+The same dataframe as \code{data}, with 4 additional column with column name defined in \code{name_as}.
 }
 \description{
 Using the Vincenty direct solution of geodesics on the ellipsoid.
 A R adaptation using https://www.movable-type.co.uk/scripts/latlong-vincenty.html code.
 }
 \examples{
-calc_geo_dest(data = data.frame(lon1 = 1:200, lat1 = 1:200, brn1 = 1:200, dis = seq(1100, 21000, 100)), lon1, lat1, brn1, dis, write_error = T)
+calc_geo_dest(data = data.frame(lon1 = 1:200, lat1 = 1:200, brn1 = 1:200, dis = seq(1100, 21000, 100)), lon1, lat1, brn1, dis)
 }
