@@ -15,6 +15,12 @@ coord_radar(theta = "x", start = 0, direction = 1, ...)
 
 \item{...}{Other arguments to be passed to ggproto}
 }
+\value{
+A \code{ggproto} object.
+}
 \description{
-Adds a radar coordinate system for radar charts. Inspired by see
+Adds a radar-coordinate system for radar charts. This turns all lines and polygons linear in polar-coordinate.
+}
+\examples{
+coord_radar()
 }

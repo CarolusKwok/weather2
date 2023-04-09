@@ -7,8 +7,23 @@
 calc_ema(data, x, y, name_as = NULL, overwrite = F)
 }
 \arguments{
-\item{angle}{}
+\item{data}{The dataframe iteself.}
+
+\item{x}{The column name of x-coordinate to be plotted onto the emagram. Usually it's some form of "temperature" data.}
+
+\item{y}{The column name of y-coordinate to be plotted onto the emagram. Usually it's some form of "pressure" data.}
+
+\item{name_as}{Names of the 2 new columns, i.e. the x- and y-coordinate of the emagram. Default as \code{NULL}, i.e. the column name of \code{x} with a suffix of \code{"_emx"} and \code{"_emy"}. Keyword \code{"*del*"} is supported.}
+
+\item{overwrite}{Let the new column names to overwrite the original dataframe columns? Default as \code{FALSE}.}
+}
+\value{
+The same dataframe as \code{data}, with 2 additional column with column name defined in \code{name_as}.
 }
 \description{
-Calculate Emagram plot coordinates
+Emagrams are one of the 5 meteorological thermo-diagram, which in essence is a log-P linear-T diagram.
+This function calculates the emagram coordinates in a linear graph.
+}
+\examples{
+calc_ema(data, x = temp, y = pres)
 }

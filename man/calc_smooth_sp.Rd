@@ -27,5 +27,5 @@ Data smoothing is an important process in data analysis to fill up missing data,
 This function fills up missing data using cubic splines, a special function defined piecewise by polynomials. Splines keeps the general shape of the model, but allows for smoothed curves within the data. The smoothness of the data can be controlled by \code{df}, or how many control points is present within the smooth.
 }
 \examples{
-calc_smooth_sp(data, x, y, df = 0.7*nrow(data), name_as = "")
+calc_smooth_sp(data, x, y, df = 0.7*nrow(data))
 }

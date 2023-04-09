@@ -7,10 +7,22 @@
 file_info(file)
 }
 \arguments{
-\item{file}{list of file paths}
+\item{file}{File paths as a \code{list} or a \code{vector}}
+}
+\value{
+For \strong{Windows}: A tibble, containing the following columns.
+\itemize{
+\item size: File size in bytes. In \code{numeric}.
+\item isdir: Is the file a directory. In \code{logical}.
+\item mode: File permissions, printed in octal. In \code{Integer}.
+\item mtime: File modification time. In \code{POSIXct}.
+\item ctime: File last status change time. In \code{POSIXct}.
+\item atime: File last access time. In \code{POSIXct}.
+\item exe: Is the file an executable file (.exe)? If so, what kind of executable ("no", "msdos", "win16", "win32", "win64", or "unknown")? In \code{character}.
+}
 }
 \description{
-Basically a wrapper for base::file.info
+This is a wrapper for \code{base::file.info}, but with an additional column of the path provided by user.
 }
 \examples{
 file_info(c("1.csv", "2.csv", "3.csv"))

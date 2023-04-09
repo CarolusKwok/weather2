@@ -7,9 +7,22 @@
 calc_skewty(data, y, name_as = NULL)
 }
 \arguments{
-\item{name_as}{}
+\item{data}{The dataframe iteself.}
+
+\item{y}{The column name of y-coordinate to be plotted onto the Skew-T Usually it's some form of "pressure" data.}
+
+\item{name_as}{Names of the 1 new columns, i.e. the y-coordinate of the Skew-T. Default as \code{NULL}, i.e. the column name of \code{x} with a suffix of \code{"_sty"}. Keyword \code{"*del*"} is supported.}
+}
+\value{
+The same dataframe as \code{data}, with 1 additional column with column name defined in \code{name_as}.
 }
 \description{
-Calculate Skew-T plot y-coordinate
+Skew-T are one of the 5 meteorological thermo-diagram, which in essence is a log-P skew-T diagram.
+This function calculates the Skew-T \strong{Y} coordinates in a linear graph.
+\strong{Warning: Internal function. Inputs are not checked before executed. Use with care.}
+\strong{Warning: This function has over_write function set as \code{TRUE}}
+}
+\examples{
+calc_skewty(data, pres)
 }
 \keyword{internal}

@@ -7,9 +7,26 @@
 calc_skewtx(data, x, y, angle, name_as = NULL)
 }
 \arguments{
-\item{name_as}{}
+\item{data}{The dataframe iteself.}
+
+\item{x}{The column name of x-coordinate to be plotted onto the Skew-T. Usually it's some form of "temperature" data.}
+
+\item{y}{The column name of y-coordinate to be plotted onto the Skew-T Usually it's some form of "pressure" data.}
+
+\item{angle}{The column name of the "skewness angle" to be plotted onto the Skew-T}
+
+\item{name_as}{Names of the 1 new columns, i.e. the x-coordinate of the Skew-T. Default as \code{NULL}, i.e. the column name of \code{x} with a suffix of \code{"_stx"}. Keyword \code{"*del*"} is supported.}
+}
+\value{
+The same dataframe as \code{data}, with 1 additional column with column name defined in \code{name_as}.
 }
 \description{
-Calculate Skew-T plot x-coordinate
+Skew-T are one of the 5 meteorological thermo-diagram, which in essence is a log-P skew-T diagram.
+This function calculates the Skew-T \strong{X} coordinates in a linear graph.
+\strong{Warning: Internal function. Inputs are not checked before executed. Use with care.}
+\strong{Warning: This function has over_write function set as \code{TRUE}}
+}
+\examples{
+calc_skewtx(data, temp, pres, skew)
 }
 \keyword{internal}

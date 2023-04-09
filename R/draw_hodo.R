@@ -1,5 +1,8 @@
 #' Plot sounding hodograph
 #'
+#' __NOTE: This is to-be-depreciated soon! Use the to-be new function `plot_hodo` instead__
+#'
+#'
 #' @param data Dataframe or Weather object of atmospheric sounding data
 #' @param uwnd column name of u-wind vector
 #' @param vwnd column name of v-wind vector
@@ -13,7 +16,7 @@
 #' @param center parameter for centering the graph at 0. Accpets "both", "uwnd", "vwnd", and both "uwnd" and "vwnd" at the same time.
 #' @param equal switch for equal scaling between x-axis and y-axis.
 #'
-#' @return a ggplot based hodoplot
+#' @return A `ggplot2` based hodoplot
 #' @export
 #'
 #' @examples draw_hodo(data, uwnd, vwnd, pres, hght, color = "pres", seed = 1, label_breaks = c("hght", seq(0, 20000, 10)), label_text = T)

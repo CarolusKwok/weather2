@@ -1,5 +1,7 @@
 #' Plot rose graph
 #'
+#' __NOTE: This is to-be-depreciated soon! Use the to-be new function `plot_rose` instead__
+#'
 #' @param data data frame containing data
 #' @param drct column name of direction
 #' @param value column name of value
@@ -7,7 +9,7 @@
 #' @param breaks Interval between each break. Default as 45.
 #' @param minor_breaks Interval between each minor break. Default as half of "breaks".
 #'
-#' @return
+#' @return A `ggplot2` based roseplot
 #' @export
 #'
 #' @examples draw_rose(data, drct, sped, time_int, breaks = 30, minor_breaks = 10)

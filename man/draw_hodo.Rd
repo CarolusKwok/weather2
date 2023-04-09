@@ -45,10 +45,10 @@ draw_hodo(
 \item{equal}{switch for equal scaling between x-axis and y-axis.}
 }
 \value{
-a ggplot based hodoplot
+A \code{ggplot2} based hodoplot
 }
 \description{
-Plot sounding hodograph
+\strong{NOTE: This is to-be-depreciated soon! Use the to-be new function \code{plot_hodo} instead}
 }
 \examples{
 draw_hodo(data, uwnd, vwnd, pres, hght, color = "pres", seed = 1, label_breaks = c("hght", seq(0, 20000, 10)), label_text = T)

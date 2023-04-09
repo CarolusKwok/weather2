@@ -19,8 +19,11 @@ draw_rose(data, drct, value, sum, breaks = 45, minor_breaks)
 
 \item{minor_breaks}{Interval between each minor break. Default as half of "breaks".}
 }
+\value{
+A \code{ggplot2} based roseplot
+}
 \description{
-Plot rose graph
+\strong{NOTE: This is to-be-depreciated soon! Use the to-be new function \code{plot_rose} instead}
 }
 \examples{
 draw_rose(data, drct, sped, time_int, breaks = 30, minor_breaks = 10)

@@ -15,6 +15,9 @@ const(name, value, unit, silent = F)
 
 \item{silent}{Should a message be returned when calling the constant? Default as \code{FALSE}.}
 }
+\value{
+A numerical value. If silent is \code{FALSE}, an explaination will be provided.
+}
 \description{
 Calling a scientific constant
 }
