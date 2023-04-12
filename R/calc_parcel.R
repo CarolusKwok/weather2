@@ -14,7 +14,12 @@
 #' @return
 #' @export
 #'
-#' @examples weather2::load_asnd() %>% dplyr::slice(1) %>% dplyr::mutate(pres2 = 200) %>% weather2::calc_parcel(pres, temp, dwpt, pres2)
+#' @examples
+#' weather2::load_uw_asnd() %>%
+#' dplyr::slice(1) %>%
+#' dplyr::select(pres, temp, dwpt) %>%
+#' dplyr::mutate(pres2 = 200) %>%
+#' weather2::calc_parcel(pres, temp, dwpt, pres2)
 calc_parcel = function(data, pres1, temp1, dwpt1, pres2, acc = 1, name_as = NULL, overwrite = F){
   #Check ####
   if(weather2::sys_ckc_dataframe(data, "data")){return()}
@@ -37,7 +42,7 @@ calc_parcel = function(data, pres1, temp1, dwpt1, pres2, acc = 1, name_as = NULL
                         t = {{temp1}},
                         d = {{dwpt1}},
                         p2= {{pres2}}) %>%
-    weather2::calc_lcl(p, t, d, acc = 5, name_as = c("lp", "ltt", "ltd")) %>%
+    weather2::calc_lcl(p, t, d, acc = 5L, name_as = c("lp", "ltt", "ltd")) %>%
     weather2::calc_adi_dry(pres1 = p, temp1 = t, pres2 = p2, name_as = "t2_dry") %>%
     weather2::calc_isohume(pres1 = p, temp1 = d, pres2 = p2, name_as = "d2_dry") %>%
     weather2::calc_adi_wet(pres1 = `lp`, temp1 = `ltt`, pres2 = `p2`, name_as = "t2_wet", acc = acc) %>%

@@ -15,6 +15,9 @@ sys_ckf_CalcSmooth(data, based, value, check_na = T)
 
 \item{check_na}{Should NA values be excluded from the based and value column? Default as \code{TRUE}}
 }
+\value{
+A logical value. \code{TRUE} if an error occured. \code{FALSE} if no error occured. A text message is provided if \code{silent} is \code{FALSE}.
+}
 \description{
 System tool: Check if the input satisfy the \code{calc_smooth_} requirements
 }

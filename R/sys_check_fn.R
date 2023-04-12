@@ -85,6 +85,7 @@ sys_ckf_SysLoadLine = function(data, title, attempt, worker, list_fail, threshol
 #' @param check_na Should NA values be excluded from the based and value column? Default as `TRUE`
 #'
 #' @return
+#' A logical value. `TRUE` if an error occured. `FALSE` if no error occured. A text message is provided if `silent` is `FALSE`.
 #' @export
 #'
 #' @examples
@@ -92,6 +93,7 @@ sys_ckf_CalcSmooth = function(data, based, value, check_na = T){
   if(weather2::sys_ckc_dataframe(value = data, value_name = "data")){return(T)}
   if(weather2::sys_ckd_colexist(value = {{based}}, value_name = "based", data = data, data_name = "data")){return(T)}
   if(weather2::sys_ckd_colexist(value = {{value}}, value_name = "value", data = data, data_name = "data")){return(T)}
+  if(weather2::sys_ckd_grouped(data = data, data_name = "data")){return(T)}
 
   data0 = dplyr::select(data, x = {{based}})$x
   if(check_na){

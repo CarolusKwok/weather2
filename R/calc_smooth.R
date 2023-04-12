@@ -3,9 +3,10 @@
 #' Data smoothing is an important process in data analysis to fill up missing data, or to remove extreme values.
 #' This function fills up missing data with linear model, predicted by the head and tail of the gap.
 #'
-#' @param data The dataframe itself, storing all observations.
+#' @param data The dataframe itself, storing all observations. The dataframe must not be grouped.
 #' @param based The column name of how the data should be arranged, in ascending order. This column must not contain NAs, must be unique, and must be "numericable".
 #' @param value The column name of what values should be smoothed. This column must contain NAs.
+#' @param max_fill The maximum size of a NA-gap. Default as `NULL`, which ignores this argument. Must be numeric.
 #' @param trailing Remove all NAs at the head of prediction column? Default as `TRUE`.
 #' @param name_as Names of the 1 new columns, i.e. the newly smoothed data. Default as `NULL`, i.e. the column name of `value` with a prefix of `"slm_"`. Keyword `"*del*"` is supported.
 #' @param overwrite Let the new column names to overwrite the original dataframe columns? Default as `FALSE`.
@@ -14,76 +15,88 @@
 #' @export
 #'
 #' @examples calc_smooth_lm(data, x, y, trailing = F)
-calc_smooth_lm = function(data, based, value, trailing = T, name_as = NULL, overwrite = F){
+calc_smooth_lm = function(data, based, value , max_fill = NULL, trailing = T, name_as = NULL, overwrite = F){
   #Check ####
   if(weather2::sys_ckf_CalcSmooth(data = data, based = {{based}}, value = {{value}})){return()}
   if(weather2::sys_ckc_logical(value = trailing, value_name = "trailing")){return()}
+  if(!is.null(max_fill)){if(weather2::sys_ckc_numeric(value = max_fill, value_name = "max_fill")){return()}}
 
   if(is.null(name_as)){name_as = paste0("slm_", weather2:::sys_hp_sym2chr({{value}}))}
   if(weather2::sys_ckf_NameAsReturn(name_as = name_as,
                                     overwrite = overwrite,
                                     expected = 1L)){return()}
 
-  #Get text name ####
-  name_based = weather2:::sys_hp_sym2chr({{based}})
-  name_value = weather2:::sys_hp_sym2chr({{value}})
-
-  #arrange data by x so data makes sense
-  #select part of the data, convert based into x and value into y for easier processing.
-  #mutate to give row number and list nas
+  #Arrange data so its in ascending based order ####
   data = dplyr::arrange(data, {{based}})
-  data0 = dplyr::select(data, x = {{based}}, y = {{value}}) %>%
+  #Find the data used, get NA values ####
+  data0 = dplyr::select(data,
+                        x = {{based}},
+                        y = {{value}}) %>%
     dplyr::mutate(row = 1:dplyr::n(),
-                  nas = is.na(y))
+                  NAs = is.na(y))
 
-  #filter the nas, get the row number, and get the rows 1 above and 1 behind it, and give them a group
-  ls_grp = dplyr::filter(data0, nas)$row
-  ls_grp = unique(c(ls_grp, (ls_grp+1), (ls_grp-1)))
+  #Find the group ####
+  ls_grp = dplyr::filter(data0, NAs)$row
+  ls_grp = sort(unique(c(ls_grp, (ls_grp+1), (ls_grp-1))))
   df_grp = dplyr::filter(data0,
                          row %in% ls_grp) %>%
     dplyr::bind_rows(.,.) %>%
     dplyr::arrange(x) %>%
-    dplyr::filter(!nas) %>%
+    dplyr::filter(!NAs) %>%
     dplyr::slice(2:(dplyr::n()-1)) %>%
     dplyr::mutate(groups = as.factor(ceiling((1:dplyr::n())/2)))
 
-  #left_join data0 to have groups, fill the gaps between groups, add a predict column with all nas (numeric)
-  data0 = dplyr::left_join(x = data0, y = dplyr::select(.data = df_grp, x, groups), by = "x") %>%
-    tidyr::fill(groups, .direction = "downup")
+  #Left join data ####
+  df_grp1_sel = dplyr::group_by(df_grp, x) %>%
+    dplyr::reframe(grp1 = as.factor(min(as.numeric(groups), na.rm = T)))
+  df_grp2_sel = dplyr::group_by(df_grp, x) %>%
+    dplyr::reframe(grp2 = as.factor(max(as.numeric(groups), na.rm = T)))
+  df_grp_sel = dplyr::rename(df_grp1_sel, grp = grp1)
 
-  #create lm and the prediction. Add the prediction to data0
-  #find distinct, n replace the predict with NA if its a list of nas at the top n bottom
-  if(length(unique(df_grp$groups)) == 1){
+  data0 = dplyr::left_join(x = data0, y = dplyr::select(.data = df_grp_sel, x, grp), by = "x") %>%
+    dplyr::left_join(y = dplyr::select(.data = df_grp1_sel, x, grp1), by = "x") %>%
+    dplyr::left_join(y = dplyr::select(.data = df_grp2_sel, x, grp2), by = "x") %>%
+    tidyr::fill(grp, .direction = "updown") %>%
+    tidyr::fill(grp1, .direction = "down") %>%
+    tidyr::fill(grp2, .direction = "up")
+
+  #Form the model ####
+  df_grp = dplyr::rename(df_grp, grp = groups)
+  max_grp = max(as.numeric(df_grp$grp), na.rm = T)
+  if(max_grp == 1){
     lm = lm(formula = y~x, data = df_grp, singular.ok = T)
     prediction = suppressWarnings(predict(object = lm, newdata = data0))
   } else {
-    lm = lm(formula = y~x * groups, data = df_grp, singular.ok = T)
+    lm = lm(formula = y~x * grp, data = df_grp, singular.ok = T)
     prediction = suppressWarnings(predict(object = lm, newdata = data0))
   }
-
   data0 = dplyr::mutate(data0,
-                        predict = ifelse(nas == F, y, prediction)) %>%
-    dplyr::select(-groups) %>%
-    dplyr::distinct()
-  #if there is a known value, replace the predict with the known value
+                        predict = ifelse(!NAs, y, prediction))
+
+  #Replace with NA value if trailing == T ####
   if(trailing){
-    na_first = data0$nas[1]
-    na_last  = data0$nas[nrow(data0)]
-    n = 1
-    while(data0$nas[n] == T){
-      data0$predict[n] = NA_real_
-      n = n +1
-    }
-    n = nrow(data0)
-    while(data0$nas[n] == T){
-      data0$predict[n] = NA_real_
-      n = n - 1
-    }
+    data0 = dplyr::mutate(data0,
+                          predict = ifelse(is.na(grp1) & NAs, NA, predict),
+                          predict = ifelse(is.na(grp2) & NAs, NA, predict))
   }
-  #return the smoothed data! first guess the appropriate column name
+  #Replace with NA value if > group size ####
+  if(!is.null(max_fill)){
+    df_grp_size = dplyr::group_by(.data = df_grp, grp) %>%
+      dplyr::reframe(size = max(x) - min(x))
+    ## Find faulty groups ####
+    ls_grpX = dplyr::filter(df_grp_size,
+                            size > max_fill)$grp
+    ## Replace! ####
+    data0 = dplyr::mutate(data0,
+                          predict = ifelse(grp %in% ls_grpX, NA, predict))
+  }
+  #Replace with known value ####
+  data0 = dplyr::mutate(data0, predict = ifelse(NAs, predict, y))
+
+  #Return the data ####
   data = weather2::sys_tld_FormatReturn(data,
-                                        name_as,
-                                        list(data0$predict),
+                                        name_as = name_as,
+                                        value = list(data0$predict),
                                         overwrite = overwrite)
   return(data)
 }
@@ -96,7 +109,7 @@ calc_smooth_lm = function(data, based, value, trailing = T, name_as = NULL, over
 #' *`"center"`: The window is at the center of the arranged table, i.e. the smoothed value will be the weighted average of `n-(s/2)` to `n+(s/2)`
 #' *`"right"`: The window is at the right of the arranged table, i.e. the smoothed value will be the weighted average of `n-s` to `n`
 #'
-#' @param data The dataframe itself, storing all observations.
+#' @param data The dataframe itself, storing all observations. The dataframe must not be grouped.
 #' @param based The column name of how the data should be arranged, in ascending order. This column must not contain NAs, must be unique, and must be "numericable".
 #' @param value The column name of what values should be smoothed. This column must contain NAs.
 #' @param type Type of smoothening performed by the window position, relative to the observation. Accepts 1 string of `"left"`, `"center"`, or `"right"`.
@@ -210,7 +223,7 @@ calc_smooth_ma = function(data, based, value, type = "center", weight = 3, NAs =
 #' Data smoothing is an important process in data analysis to fill up missing data, or to remove extreme values.
 #' This function fills up missing data using cubic splines, a special function defined piecewise by polynomials. Splines keeps the general shape of the model, but allows for smoothed curves within the data. The smoothness of the data can be controlled by `df`, or how many control points is present within the smooth.
 #'
-#' @param data The dataframe itself, storing all observations.
+#' @param data The dataframe itself, storing all observations. The dataframe must not be grouped.
 #' @param based The column name of how the data should be arranged, in ascending order. This column must not contain NAs, must be unique, and must be "numericable".
 #' @param value The column name of what values should be smoothed. This column must contain NAs.
 #' @param df Degree of freedom for smoothing. Must be between 1 and the number of rows in data (rows with NA values excluded)

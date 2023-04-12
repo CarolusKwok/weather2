@@ -36,5 +36,9 @@ calc_parcel(
 An air parcel can be dry-adiabetically and moist-adiabetically cooled/ heated, which is determined by the mixing ratio of the said parcel. This formula automatically selects the correct final temperature and dew point of the parcel, by \code{calc_lcl} first.
 }
 \examples{
-weather2::load_asnd() \%>\% dplyr::slice(1) \%>\% dplyr::mutate(pres2 = 200) \%>\% weather2::calc_parcel(pres, temp, dwpt, pres2)
+weather2::load_uw_asnd() \%>\%
+dplyr::slice(1) \%>\%
+dplyr::select(pres, temp, dwpt) \%>\%
+dplyr::mutate(pres2 = 200) \%>\%
+weather2::calc_parcel(pres, temp, dwpt, pres2)
 }

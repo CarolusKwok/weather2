@@ -9,7 +9,8 @@ calc_ccl_est(
   pres,
   temp,
   dwpt,
-  ...,
+  asnd = NULL,
+  sounding,
   name_as = c("cclp", "cclt", "cclh"),
   overwrite = F
 )
@@ -23,9 +24,11 @@ calc_ccl_est(
 
 \item{dwpt}{The column name of the initial dewpoint of the calculation. Unit in \code{degC}.}
 
-\item{...}{The column name of grouping of data}
+\item{asnd}{The column name of the sounding to be used in the calculation. Default as \code{NULL}, which assume all observations uses the first sounding in \code{sounding}}
 
-\item{name_as}{Names of the 3 new columns, in the order of "pressure of the CCL", "temperature of the CCL(estimated by smoothened temperature profile)", and "temperature of the CCL(estimated by isohume)". Default as \code{c("cclp", "cclt", "cclh")}.}
+\item{sounding}{A list of soundings. The column name of initial pressure, temperature and dewpoint must be defined as provided in \code{pres}, \code{temp}, and \code{dwpt}.}
+
+\item{name_as}{Names of the 3 new columns, i.e. "pressure of the CCL", "temperature of the CCL(estimated by smoothened temperature profile)", and "temperature of the CCL(estimated by isohume)". Default as \code{c("cclp", "cclt", "cclh")}.}
 
 \item{overwrite}{Let the new column names to overwrite the original dataframe columns? Default as \code{FALSE}.}
 }
@@ -35,5 +38,6 @@ Typically, CCL is only used for air parcels from the surface, as the pressure le
 Do note that this algorithum supports computate of multiple sounding at once. \strong{However, multiple sounding must be grouped by additional columns.} Feed the additional columns used in the \code{...} argument.
 }
 \examples{
-load_asnd(time = Sys.time()) \%>\% calc_ccl_est(pres, temp, dwpt, station, time)
+load_asnd(time = Sys.time()) \%>\%
+calc_ccl_est(data = dplyr::slice(., 1:3), pres, temp, dwpt, sounding = .)
 }

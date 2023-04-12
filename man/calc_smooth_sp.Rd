@@ -7,7 +7,7 @@
 calc_smooth_sp(data, based, value, df, name_as = NULL, overwrite = F)
 }
 \arguments{
-\item{data}{The dataframe itself, storing all observations.}
+\item{data}{The dataframe itself, storing all observations. The dataframe must not be grouped.}
 
 \item{based}{The column name of how the data should be arranged, in ascending order. This column must not contain NAs, must be unique, and must be "numericable".}
 

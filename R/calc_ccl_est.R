@@ -8,15 +8,18 @@
 #' @param pres The column name of the initial pressure of the calculation. In any units.
 #' @param temp The column name of the initial temperature of the calculation. Unit in `degC`.
 #' @param dwpt The column name of the initial dewpoint of the calculation. Unit in `degC`.
-#' @param ... The column name of grouping of data
-#' @param name_as Names of the 3 new columns, in the order of "pressure of the CCL", "temperature of the CCL(estimated by smoothened temperature profile)", and "temperature of the CCL(estimated by isohume)". Default as `c("cclp", "cclt", "cclh")`.
+#' @param asnd The column name of the sounding to be used in the calculation. Default as `NULL`, which assume all observations uses the first sounding in `sounding`
+#' @param sounding A list of soundings. The column name of initial pressure, temperature and dewpoint must be defined as provided in `pres`, `temp`, and `dwpt`.
+#' @param name_as Names of the 3 new columns, i.e. "pressure of the CCL", "temperature of the CCL(estimated by smoothened temperature profile)", and "temperature of the CCL(estimated by isohume)". Default as `c("cclp", "cclt", "cclh")`.
 #' @param overwrite Let the new column names to overwrite the original dataframe columns? Default as `FALSE`.
 #'
 #' @return
 #' @export
 #'
-#' @examples load_asnd(time = Sys.time()) %>% calc_ccl_est(pres, temp, dwpt, station, time)
-calc_ccl_est = function(data, pres, temp, dwpt, ..., name_as = c("cclp", "cclt", "cclh"), overwrite = F){
+#' @examples
+#' load_asnd(time = Sys.time()) %>%
+#' calc_ccl_est(data = dplyr::slice(., 1:3), pres, temp, dwpt, sounding = .)
+calc_ccl_est = function(data, pres, temp, dwpt, asnd = NULL, sounding, name_as = c("cclp", "cclt", "cclh"), overwrite = F){
   #Preset function  ####
   magic = function(data0){
     #Smooth the dataframe

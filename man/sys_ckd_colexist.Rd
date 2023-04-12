@@ -30,6 +30,9 @@ sys_ckd_colexist(
 
 \item{silent}{Should a text message be shown if incorrect? Default as \code{False}.}
 }
+\value{
+A logical value. \code{TRUE} if an error occured. \code{FALSE} if no error occured. A text message is provided if \code{silent} is \code{FALSE}.
+}
 \description{
 System tool: Check if a colname is present/ absent in a dataframe
 }
