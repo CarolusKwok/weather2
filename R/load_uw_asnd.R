@@ -6,9 +6,9 @@
 #' @param time A list of time. If said time does not have a sounding, it will try to adjust to the last sounding possible. Only accepts POSIXct.
 #' @param station Weather station code, according to the University of Wyoming website.
 #' @param frost Include frost point calculation in dataframe. Default as `TRUE`.
-#' @param attempt Attempts of downloads to try per time. Default as `5`.
-#' @param list_fail Should failed to download items be listed out? Default as `5`.
-#' @param worker Numbers of sessions to be open.
+#' @param attempt Attempts of downloads to try per time. Default as `5L`.
+#' @param list_fail Should failed to download items be listed out? Default as `TRUE`.
+#' @param worker Numbers of sessions to be open. Default as `1L`.
 #'
 #' @return
 #' @export
@@ -66,8 +66,10 @@ load_uw_asnd = function(time = Sys.time(), station = "45004", frost = T, attempt
   #Check ####
   if(weather2::sys_ckc_POSIXct(time, "time")){return()}
   if(weather2::sys_ckc_character(station, "station")){return()}
-  if(weather2::sys_ckc_logical(frost, "frost")){return()}
   if(weather2::sys_ckc_integer(attempt, "attempt")){return()}
+  if(weather2::sys_ckc_integer(worker, "worker")){return()}
+  if(weather2::sys_ckc_logical(list_fail, "list_fail")){return()}
+  if(weather2::sys_ckc_logical(frost, "frost")){return()}
 
   #Create Dataframe #####
   URL = tibble::tibble(time = time) %>%
@@ -86,6 +88,10 @@ load_uw_asnd = function(time = Sys.time(), station = "45004", frost = T, attempt
     dplyr::distinct()
 
   #Grab the list of data ####
+  if(worker <= 0){
+    return(URL)
+  }
+
   list = weather2::sys_load_line(data = URL,
                                  title = "UW - Atmospheric Soundings",
                                  attempt = attempt,

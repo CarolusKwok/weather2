@@ -47,7 +47,7 @@ sys_ckf_SysLoadFileset = function(data, title, attempt, worker, list_fail, thres
   if(weather2::sys_ckc_integer(value = attempt, value_name = "attempt")){return(T)}
   if(weather2::sys_ckc_integer(value = worker, value_name = "worker")){return(T)}
   if(weather2::sys_ckc_logical(value = list_fail, value_name = "list_fail")){return(T)}
-  if(weather2::sys_ckc_integer(value = threshold, value_name = "threshold")){return(T)}
+  if(weather2::sys_ckc_numeric(value = threshold, value_name = "threshold")){return(T)}
   return(F)
 }
 

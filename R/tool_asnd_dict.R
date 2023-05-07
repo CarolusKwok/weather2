@@ -26,7 +26,12 @@ tool_asnd_dict = function(){
                "Mean mixed layer potential temperature",
                "Mean mixed layer mixing ratio",
                "1000 hPa to 500 hPa thickness",
-               "Precipitable water [mm] for entire sounding"),
+               "Precipitable water [mm] for entire sounding",
+
+               "Equilibrum Level",
+               "Equilibrum Level using virtual temperature",
+               "Level of Free Convection",
+               "LFCT using virtual temperature"),
     abbr = c("show","lift",
              "lifv","swet",
              "kinx","ctot",
@@ -37,7 +42,12 @@ tool_asnd_dict = function(){
              "lclt","lclp",
              "lcth","mlth",
              "mlmr","thtk",
-             "pwat"))
+             "pwat",
+
+             "eqlv",
+             "eqtv",
+             "lfct",
+             "ltcv"))
 
   return(find_table)
 }
