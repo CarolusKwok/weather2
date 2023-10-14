@@ -32,8 +32,6 @@ sys_hp_hasArg = function(value, value_name){
 #' @examples sys_hp_sym2chr(hiiiii)
 sys_hp_sym2chr = function(x){
   if(weather2:::sys_hp_hasArg({{x}}, "x")){return()}
-
-
   return(rlang::as_name(rlang::quo({{x}})))
 }
 
